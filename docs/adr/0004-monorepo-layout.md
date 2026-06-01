@@ -10,7 +10,7 @@ Roomly has two front-ends (Expo mobile, Next.js admin) and a shared backend (Sup
 ## Options
 
 1. Separate repos per app + a private npm package for shared lib.
-2. **Monorepo (pnpm workspaces + Turborepo)** with apps/* and packages/*.
+2. **Monorepo (pnpm workspaces + Turborepo)** with apps/_ and packages/_.
 3. Single Expo + Next.js mixed repo with relative imports.
 
 ## Decision

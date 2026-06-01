@@ -17,14 +17,14 @@ The prior codebase shipped to production with **zero tests**. Regressions were c
 
 Option **2**.
 
-| Layer                                | Tool                          | Required tests                                                                    | Coverage gate    |
-| ------------------------------------ | ----------------------------- | --------------------------------------------------------------------------------- | ---------------- |
-| `packages/lib/**`                    | Jest                          | Unit tests for every exported function                                            | **100% lines**   |
-| `supabase/migrations/*` (RLS, RPC)   | pgTAP or `supabase test db`   | Positive + negative case per policy and per RPC                                   | per-file present |
-| `supabase/functions/*`               | Deno `Deno.test`              | Happy path + missing JWT + mismatched sub + idempotent replay + downstream failure| per-file present |
-| `apps/mobile/src/features/**/hooks/` | Jest + RNTL `renderHook`      | Behavior per hook                                                                 | per-file present |
-| `apps/mobile/app/**` (screens)       | Jest + RNTL                   | Loading, error retry, primary interaction                                         | smoke only       |
-| `apps/admin/app/**`                  | Vitest or Jest + Playwright   | Component + smoke                                                                 | smoke only       |
+| Layer                                | Tool                        | Required tests                                                                     | Coverage gate    |
+| ------------------------------------ | --------------------------- | ---------------------------------------------------------------------------------- | ---------------- |
+| `packages/lib/**`                    | Jest                        | Unit tests for every exported function                                             | **100% lines**   |
+| `supabase/migrations/*` (RLS, RPC)   | pgTAP or `supabase test db` | Positive + negative case per policy and per RPC                                    | per-file present |
+| `supabase/functions/*`               | Deno `Deno.test`            | Happy path + missing JWT + mismatched sub + idempotent replay + downstream failure | per-file present |
+| `apps/mobile/src/features/**/hooks/` | Jest + RNTL `renderHook`    | Behavior per hook                                                                  | per-file present |
+| `apps/mobile/app/**` (screens)       | Jest + RNTL                 | Loading, error retry, primary interaction                                          | smoke only       |
+| `apps/admin/app/**`                  | Vitest or Jest + Playwright | Component + smoke                                                                  | smoke only       |
 
 ### Conventions
 

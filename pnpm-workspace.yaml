@@ -1,0 +1,17 @@
+packages:
+  - apps/*
+  - packages/*
+
+# Explicit allowlist of postinstall scripts we trust.
+# Per AGENTS.md §0 rule 2: nothing runs at install time without review.
+allowBuilds:
+  unrs-resolver: true # native rust resolver used by eslint-plugin-import-x
+
+# pnpm 11 minimumReleaseAge gate — packages here have been verified
+# (see docs/adr/0007-dependency-pins.md) and are exempt from the maturity wait.
+minimumReleaseAgeExclude:
+  - lint-staged@17.0.7
+  - tinyexec@1.2.4
+
+# Keep this empty (or explicit) so we never auto-build random transitive deps.
+onlyBuiltDependencies: []

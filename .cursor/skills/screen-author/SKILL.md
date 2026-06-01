@@ -70,8 +70,12 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react-nativ
 import ListingDetailScreen from '../../../app/(listing)/[id]';
 import { mockListing } from '../__fixtures__/listing';
 
-it('renders skeleton then the listing', async () => { /* ... */ });
-it('shows error and retries on tap', async () => { /* ... */ });
+it('renders skeleton then the listing', async () => {
+  /* ... */
+});
+it('shows error and retries on tap', async () => {
+  /* ... */
+});
 ```
 
 ## Do not

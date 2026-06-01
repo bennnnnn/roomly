@@ -37,7 +37,10 @@ Deno.serve(async (req) => {
   if (req.method !== 'POST') return httpError(405, 'method_not_allowed');
 
   const userClient = createUserClient(req);
-  const { data: { user }, error: authError } = await userClient.auth.getUser();
+  const {
+    data: { user },
+    error: authError,
+  } = await userClient.auth.getUser();
   if (authError || !user) return httpError(401, 'unauthorized');
 
   const parsed = Input.safeParse(await req.json().catch(() => null));
@@ -58,7 +61,8 @@ Deno.serve(async (req) => {
 
 ```ts
 const eventId = stripeEvent.id;
-const { error } = await svc.from('webhook_events')
+const { error } = await svc
+  .from('webhook_events')
   .insert({ provider: 'stripe', event_id: eventId });
 if (error?.code === '23505') return httpOk({ idempotent: true });
 if (error) throw error;
@@ -71,10 +75,18 @@ if (error) throw error;
 // supabase/functions/<name>/index.test.ts
 import { assertEquals } from 'https://deno.land/std/assert/mod.ts';
 
-Deno.test('rejects missing JWT', async () => { /* ... */ });
-Deno.test('rejects when JWT sub != claimed actor', async () => { /* ... */ });
-Deno.test('happy path', async () => { /* ... */ });
-Deno.test('idempotent replay returns 200', async () => { /* ... */ });
+Deno.test('rejects missing JWT', async () => {
+  /* ... */
+});
+Deno.test('rejects when JWT sub != claimed actor', async () => {
+  /* ... */
+});
+Deno.test('happy path', async () => {
+  /* ... */
+});
+Deno.test('idempotent replay returns 200', async () => {
+  /* ... */
+});
 ```
 
 ## Do not

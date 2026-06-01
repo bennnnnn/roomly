@@ -9,22 +9,22 @@ Budgets are enforced by the quality gate where measurable, and reviewed per slic
 
 ## Mobile screen budgets
 
-| Surface              | First paint | Notes                                                     |
-| -------------------- | ----------- | --------------------------------------------------------- |
-| Browse feed          | <1.5 s      | Cache-first; Realtime hydrates                            |
-| Listing detail       | <800 ms     | Photos lazy; description streams                          |
-| Chat thread open     | <500 ms     | Cache-first; one RPC for peer context                     |
-| Chat send (perceived)| <100 ms     | Optimistic                                                |
+| Surface               | First paint | Notes                                 |
+| --------------------- | ----------- | ------------------------------------- |
+| Browse feed           | <1.5 s      | Cache-first; Realtime hydrates        |
+| Listing detail        | <800 ms     | Photos lazy; description streams      |
+| Chat thread open      | <500 ms     | Cache-first; one RPC for peer context |
+| Chat send (perceived) | <100 ms     | Optimistic                            |
 
 ## Round-trip budgets per intent
 
-| Intent                  | Budget           | Notes                                                |
-| ----------------------- | ---------------- | ---------------------------------------------------- |
-| Discover page           | 1 RT             | Single SECURITY DEFINER RPC                          |
-| Like / unlike           | 1 RT             | Single RPC returns inserted + matched                |
-| Send message            | 2 RT (incl. notify) | DB trigger enforces block / accepts_messages       |
-| Chat cold open          | ≤6 RT            | Includes peer context, messages, reactions, mark-read|
-| Photo upload (per file) | parallelizable, but each file ≤2 RT |                                |
+| Intent                  | Budget                              | Notes                                                 |
+| ----------------------- | ----------------------------------- | ----------------------------------------------------- |
+| Discover page           | 1 RT                                | Single SECURITY DEFINER RPC                           |
+| Like / unlike           | 1 RT                                | Single RPC returns inserted + matched                 |
+| Send message            | 2 RT (incl. notify)                 | DB trigger enforces block / accepts_messages          |
+| Chat cold open          | ≤6 RT                               | Includes peer context, messages, reactions, mark-read |
+| Photo upload (per file) | parallelizable, but each file ≤2 RT |                                                       |
 
 ## Bundle size
 

@@ -1,0 +1,13 @@
+node_modules/
+dist/
+build/
+coverage/
+.next/
+.expo/
+.turbo/
+pnpm-lock.yaml
+yarn.lock
+package-lock.json
+agent-tools/
+.cursor/logs/
+packages/db-types/src/generated/

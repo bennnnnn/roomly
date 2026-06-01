@@ -1,0 +1,41 @@
+{
+  "name": "roomly",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Roomly monorepo (mobile + admin + shared libs)",
+  "license": "UNLICENSED",
+  "packageManager": "pnpm@11.4.0",
+  "engines": {
+    "node": ">=20.9.0"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "typecheck": "turbo run typecheck",
+    "lint": "turbo run lint",
+    "format": "prettier --write \"**/*.{ts,tsx,js,mjs,cjs,json,md,yml,yaml}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,mjs,cjs,json,md,yml,yaml}\"",
+    "test": "turbo run test",
+    "audit": "pnpm audit --prod --audit-level=high",
+    "gate": "pnpm typecheck && pnpm lint && pnpm format:check && pnpm test && pnpm audit",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@types/jest": "30.0.0",
+    "@types/node": "25.9.1",
+    "eslint": "10.4.1",
+    "eslint-config-prettier": "10.1.8",
+    "eslint-plugin-import-x": "4.16.2",
+    "husky": "9.1.7",
+    "jest": "30.4.2",
+    "lint-staged": "17.0.7",
+    "prettier": "3.8.3",
+    "ts-jest": "29.4.11",
+    "turbo": "2.9.16",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.59.4"
+  }
+}

@@ -306,15 +306,15 @@ Each page lists: purpose · user stories · layout · elements & validation · s
 
 ## 5. Notifications
 
-| Event                       | Push | Email                          |
-| --------------------------- | ---- | ------------------------------ |
-| New message                 | ✓    | ✓ (if unread after delay)      |
-| Listing published           | ✓    | ✓ (receipt)                    |
-| Listing expiring (T-3d)     | ✓    | ✓                              |
-| Listing expired             | ✓    | ✓                              |
-| Payment receipt             | —    | ✓                              |
-| Report actioned (reporter)  | opt  | opt                            |
-| Email verification / reset  | —    | ✓                              |
+| Event                      | Push | Email                     |
+| -------------------------- | ---- | ------------------------- |
+| New message                | ✓    | ✓ (if unread after delay) |
+| Listing published          | ✓    | ✓ (receipt)               |
+| Listing expiring (T-3d)    | ✓    | ✓                         |
+| Listing expired            | ✓    | ✓                         |
+| Payment receipt            | —    | ✓                         |
+| Report actioned (reporter) | opt  | opt                       |
+| Email verification / reset | —    | ✓                         |
 
 All respect user prefs; transactional emails (verify, reset, receipt) always sent.
 

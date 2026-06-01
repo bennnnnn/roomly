@@ -1,0 +1,17 @@
+{
+  "name": "@roomly/db-types",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Generated Postgres types via `supabase gen types typescript`. Populated in Slice 1.",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "test": "echo 'no tests in db-types' && exit 0"
+  }
+}

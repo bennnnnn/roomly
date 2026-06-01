@@ -90,26 +90,26 @@ If an MCP cannot do what you need, document the gap in `docs/mcp-gaps.md` and on
 
 ## 5. Tech stack (verified May 31, 2026)
 
-| Layer        | Choice                                          | Pinned at start of work |
-| ------------ | ----------------------------------------------- | ----------------------- |
-| Mobile       | Expo SDK 56 (RN 0.85, React 19.2), Expo Router  | yes                     |
-| Admin        | Next.js (latest stable, verify before adding)   | yes                     |
-| Language     | TypeScript strict, `noUncheckedIndexedAccess`   | yes                     |
-| Styling      | NativeWind 4.2.x (mobile), Tailwind v3 (admin)  | yes                     |
-| State        | Zustand (UI/session) + TanStack Query (server)  | yes                     |
-| Backend      | Supabase (Postgres + Auth + Storage + Realtime) | yes                     |
-| DB types     | `supabase gen types typescript`                 | yes                     |
-| Payments     | `@stripe/stripe-react-native` 0.66.x            | yes                     |
-| Email        | Resend via Edge Function                        | yes                     |
-| Push         | Expo Notifications                              | yes                     |
-| Maps         | `react-native-maps`                             | yes                     |
-| Monitoring   | Sentry + PostHog (wrapped in `lib/logger.ts`)   | yes                     |
-| Tests        | Jest + React Native Testing Library + Deno test + pgTAP | yes             |
-| Lint/format  | ESLint (strict-type-checked) + Prettier         | yes                     |
-| Monorepo     | pnpm workspaces + Turborepo                     | yes                     |
-| CI           | GitHub Actions                                  | yes                     |
-| Builds       | EAS Build + Submit                              | yes                     |
-| Node runtime | 20 LTS (Supabase JS requirement)                | yes                     |
+| Layer        | Choice                                                  | Pinned at start of work |
+| ------------ | ------------------------------------------------------- | ----------------------- |
+| Mobile       | Expo SDK 56 (RN 0.85, React 19.2), Expo Router          | yes                     |
+| Admin        | Next.js (latest stable, verify before adding)           | yes                     |
+| Language     | TypeScript strict, `noUncheckedIndexedAccess`           | yes                     |
+| Styling      | NativeWind 4.2.x (mobile), Tailwind v3 (admin)          | yes                     |
+| State        | Zustand (UI/session) + TanStack Query (server)          | yes                     |
+| Backend      | Supabase (Postgres + Auth + Storage + Realtime)         | yes                     |
+| DB types     | `supabase gen types typescript`                         | yes                     |
+| Payments     | `@stripe/stripe-react-native` 0.66.x                    | yes                     |
+| Email        | Resend via Edge Function                                | yes                     |
+| Push         | Expo Notifications                                      | yes                     |
+| Maps         | `react-native-maps`                                     | yes                     |
+| Monitoring   | Sentry + PostHog (wrapped in `lib/logger.ts`)           | yes                     |
+| Tests        | Jest + React Native Testing Library + Deno test + pgTAP | yes                     |
+| Lint/format  | ESLint (strict-type-checked) + Prettier                 | yes                     |
+| Monorepo     | pnpm workspaces + Turborepo                             | yes                     |
+| CI           | GitHub Actions                                          | yes                     |
+| Builds       | EAS Build + Submit                                      | yes                     |
+| Node runtime | 20 LTS (Supabase JS requirement)                        | yes                     |
 
 Exact versions are pinned in `package.json` and recorded with citations in `docs/adr/0007-dependency-pins.md` at the moment of install.
 
@@ -130,14 +130,14 @@ Exact versions are pinned in `package.json` and recorded with citations in `docs
 
 ## 7. Test policy (full text in `docs/adr/0005-test-strategy.md`)
 
-| Layer                                | Required tests                                            |
-| ------------------------------------ | --------------------------------------------------------- |
-| `packages/lib/*`                     | Unit tests, 100% line coverage                            |
-| `supabase/migrations/*` (RLS, RPC)   | pgTAP or `supabase test db` SQL fixtures                  |
+| Layer                                | Required tests                                                    |
+| ------------------------------------ | ----------------------------------------------------------------- |
+| `packages/lib/*`                     | Unit tests, 100% line coverage                                    |
+| `supabase/migrations/*` (RLS, RPC)   | pgTAP or `supabase test db` SQL fixtures                          |
 | `supabase/functions/*`               | Deno `Deno.test` covering happy path + auth failure + idempotency |
-| `apps/mobile/src/features/*` (hooks) | RNTL `renderHook` + integration tests for stores          |
-| `apps/admin/app/*`                   | Vitest or Jest component tests + Playwright smoke         |
-| Screens (mobile + admin)             | Snapshot + key interaction tests; no business logic in screens |
+| `apps/mobile/src/features/*` (hooks) | RNTL `renderHook` + integration tests for stores                  |
+| `apps/admin/app/*`                   | Vitest or Jest component tests + Playwright smoke                 |
+| Screens (mobile + admin)             | Snapshot + key interaction tests; no business logic in screens    |
 
 CI fails on coverage regression for `packages/lib`.
 
@@ -171,16 +171,16 @@ If a change blows a budget, add a perf test and either fix it or open an ADR wit
 
 Slice gates are enforced — no slice ends until its exit criteria are met.
 
-| Slice | Theme                              | Exit criteria                                                                                  |
-| ----- | ---------------------------------- | ---------------------------------------------------------------------------------------------- |
-| 0     | Foundations & rails                | Monorepo, ESLint, TS, Jest, CI green on empty shell, all governance files in place             |
-| 1     | Auth + profile                     | Apple/Google/Email, verify-email deep link, deletion incl. Apple, all helper libs at 100% cov  |
-| 2     | Listings core (no payment)         | Wizard, photos, detail screen, owner edit, drafts persisted                                    |
-| 3     | Browse & filter                    | Feed, filters, map, location, saved                                                            |
-| 4     | Payments                           | Stripe PaymentSheet, server-driven pricing, webhook, receipts, renew                           |
-| 5     | Messaging + push                   | Realtime chat, conversation_hidden, contact-info detection, block/report, notifications        |
-| 6     | Profile/settings/billing/mine      | All settings screens, my-listings management, billing history                                  |
-| 7     | Admin web + hardening              | Admin Next.js app shipped, RLS audit pass, a11y audit pass, EAS build to TestFlight/Internal   |
+| Slice | Theme                         | Exit criteria                                                                                 |
+| ----- | ----------------------------- | --------------------------------------------------------------------------------------------- |
+| 0     | Foundations & rails           | Monorepo, ESLint, TS, Jest, CI green on empty shell, all governance files in place            |
+| 1     | Auth + profile                | Apple/Google/Email, verify-email deep link, deletion incl. Apple, all helper libs at 100% cov |
+| 2     | Listings core (no payment)    | Wizard, photos, detail screen, owner edit, drafts persisted                                   |
+| 3     | Browse & filter               | Feed, filters, map, location, saved                                                           |
+| 4     | Payments                      | Stripe PaymentSheet, server-driven pricing, webhook, receipts, renew                          |
+| 5     | Messaging + push              | Realtime chat, conversation_hidden, contact-info detection, block/report, notifications       |
+| 6     | Profile/settings/billing/mine | All settings screens, my-listings management, billing history                                 |
+| 7     | Admin web + hardening         | Admin Next.js app shipped, RLS audit pass, a11y audit pass, EAS build to TestFlight/Internal  |
 
 ---
 

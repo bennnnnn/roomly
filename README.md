@@ -16,14 +16,14 @@ A native mobile app (iOS + Android) for listing and finding rooms / houses to re
 
 ## Quick links
 
-| Doc                                            | What it is                                                    |
-| ---------------------------------------------- | ------------------------------------------------------------- |
-| [AGENTS.md](./AGENTS.md)                       | The engineering contract — read first                          |
-| [docs/PRD.md](./docs/PRD.md)                   | Product spec                                                  |
-| [docs/lessons-from-prior-codebase.md](./docs/lessons-from-prior-codebase.md) | Concrete traps to avoid                  |
-| [docs/OPEN_QUESTIONS.md](./docs/OPEN_QUESTIONS.md) | Unknowns that block launch                                |
-| [docs/adr/](./docs/adr/)                       | Architecture Decision Records                                 |
-| [CONTRIBUTING.md](./CONTRIBUTING.md)           | How to contribute, the quality gate, dependency policy        |
+| Doc                                                                          | What it is                                             |
+| ---------------------------------------------------------------------------- | ------------------------------------------------------ |
+| [AGENTS.md](./AGENTS.md)                                                     | The engineering contract — read first                  |
+| [docs/PRD.md](./docs/PRD.md)                                                 | Product spec                                           |
+| [docs/lessons-from-prior-codebase.md](./docs/lessons-from-prior-codebase.md) | Concrete traps to avoid                                |
+| [docs/OPEN_QUESTIONS.md](./docs/OPEN_QUESTIONS.md)                           | Unknowns that block launch                             |
+| [docs/adr/](./docs/adr/)                                                     | Architecture Decision Records                          |
+| [CONTRIBUTING.md](./CONTRIBUTING.md)                                         | How to contribute, the quality gate, dependency policy |
 
 ## Current status
 

@@ -29,16 +29,16 @@ That runs all the steps below in order. If any step fails, the gate fails.
 
 ## When a step fails
 
-| Step                  | First places to look                                                |
-| --------------------- | ------------------------------------------------------------------- |
-| typecheck             | Inspect the failing file; do not add `// @ts-ignore`. Fix the type. |
-| lint (max-lines)      | Split the file per `docs/adr/0003-file-size-cap.md`.                |
-| lint (no-explicit-any)| Replace `any` with `unknown` and narrow, or define the proper type. |
-| test                  | Re-run the single test with `pnpm test -- -t "<name>"`.             |
-| test:db (pgTAP)       | RLS regression most likely. Inspect with `supabase test db -d`.     |
-| test:fn (Deno)        | Most common: JWT pinning or zod schema mismatch.                    |
-| db:reset:check        | A migration is non-idempotent or out of order. Rename / fix.        |
-| audit:prod            | Run `pnpm audit --prod --json` and bump the flagged dep.            |
+| Step                   | First places to look                                                |
+| ---------------------- | ------------------------------------------------------------------- |
+| typecheck              | Inspect the failing file; do not add `// @ts-ignore`. Fix the type. |
+| lint (max-lines)       | Split the file per `docs/adr/0003-file-size-cap.md`.                |
+| lint (no-explicit-any) | Replace `any` with `unknown` and narrow, or define the proper type. |
+| test                   | Re-run the single test with `pnpm test -- -t "<name>"`.             |
+| test:db (pgTAP)        | RLS regression most likely. Inspect with `supabase test db -d`.     |
+| test:fn (Deno)         | Most common: JWT pinning or zod schema mismatch.                    |
+| db:reset:check         | A migration is non-idempotent or out of order. Rename / fix.        |
+| audit:prod             | Run `pnpm audit --prod --json` and bump the flagged dep.            |
 
 ## What never to do
 
