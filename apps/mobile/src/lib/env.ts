@@ -17,7 +17,10 @@ import { defineEnv } from '@roomly/lib';
 // The single legal site for `process.env` access in apps/mobile/src. The
 // `no-restricted-syntax` rule in `eslint.config.mjs` flags this anywhere
 // else; this file is on the allowlist.
-const getter = (key: string): string | undefined => process.env[key];
+const getter = (key: string): string | undefined => {
+  const value: string | undefined = process.env[key];
+  return value;
+};
 
 export const env = defineEnv(
   {
