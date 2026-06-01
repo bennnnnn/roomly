@@ -7,29 +7,7 @@
 -- Slice 1E: profiles only. listings/messages/etc land in later slices.
 
 -- ============================================================================
--- 1. Shared block-filter SQL fragment (referenced by every user-facing SELECT
---    policy from now on). See ADR-0006.
--- ============================================================================
-
-create or replace function public.is_blocked_between(a uuid, b uuid)
-returns boolean
-language sql
-stable
-security definer
-set search_path = ''
-as $$
-  select exists (
-    select 1 from public.blocks
-    where (blocker_id = a and blocked_id = b)
-       or (blocker_id = b and blocked_id = a)
-  );
-$$;
-
-comment on function public.is_blocked_between is
-  'True when either user has blocked the other. SECURITY DEFINER so RLS on blocks does not recurse.';
-
--- ============================================================================
--- 2. blocks table — referenced by the helper, must exist first.
+-- 1. blocks table — must exist before is_blocked_between references it.
 -- ============================================================================
 
 create table public.blocks (
@@ -56,6 +34,28 @@ create policy "blocks: actor can delete own"
   on public.blocks for delete
   to authenticated
   using (blocker_id = (select auth.uid()));
+
+-- ============================================================================
+-- 2. Shared block-filter SQL fragment (referenced by every user-facing SELECT
+--    policy from now on). See ADR-0006.
+-- ============================================================================
+
+create or replace function public.is_blocked_between(a uuid, b uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select exists (
+    select 1 from public.blocks
+    where (blocker_id = a and blocked_id = b)
+       or (blocker_id = b and blocked_id = a)
+  );
+$$;
+
+comment on function public.is_blocked_between is
+  'True when either user has blocked the other. SECURITY DEFINER so RLS on blocks does not recurse.';
 
 -- ============================================================================
 -- 3. profiles table.

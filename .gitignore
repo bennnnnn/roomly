@@ -62,4 +62,6 @@ DerivedData/
 .eas/
 
 # Generated types
-packages/db-types/src/generated/
+# Generated Supabase types are committed (not secrets) so CI typechecks without
+# a linked Supabase project. Regenerate with `pnpm db:types` after migrations.
+# packages/db-types/src/generated/  — intentionally NOT ignored
