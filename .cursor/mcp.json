@@ -1,0 +1,10 @@
+{
+  "$schema": "https://cursor.com/schemas/mcp.schema.json",
+  "_comment": "Project-scoped MCP servers for Roomly. Anyone who opens this repo in Cursor inherits these — no per-machine setup. Tracks OQ-017.",
+  "mcpServers": {
+    "supabase": {
+      "_comment": "Bound to the Roomly Supabase project (olzluwalevtnyliwfhai) via the project_ref query param. The URL is not a secret — it just identifies the project; auth is via your Cursor-signed-in Supabase session.",
+      "url": "https://mcp.supabase.com/mcp?project_ref=olzluwalevtnyliwfhai"
+    }
+  }
+}
