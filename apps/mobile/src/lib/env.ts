@@ -22,7 +22,10 @@ const getter = (key: string): string | undefined => process.env[key] as string |
 export const env = defineEnv(
   {
     EXPO_PUBLIC_SUPABASE_URL: { required: true, visibility: 'public' },
-    EXPO_PUBLIC_SUPABASE_ANON_KEY: { required: true, visibility: 'public' },
+    // Supabase's "new API keys" (post-2025). Format: `sb_publishable_...`.
+    // The legacy `anon` JWT still works until end-of-2026 but new code uses
+    // the new format. See supabase.com/docs/guides/getting-started/api-keys.
+    EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY: { required: true, visibility: 'public' },
     // Optional observability vars — when absent, adapters are not registered
     // and the logger remains a no-op (safe for tests/CI/pre-DSN dev).
     EXPO_PUBLIC_SENTRY_DSN: { required: false, visibility: 'public' },

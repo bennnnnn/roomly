@@ -37,7 +37,7 @@ supabase test db
 open http://localhost:54323
 ```
 
-The local `EXPO_PUBLIC_SUPABASE_URL` is `http://127.0.0.1:54321`; `EXPO_PUBLIC_SUPABASE_ANON_KEY` is printed by `supabase status`.
+The local `EXPO_PUBLIC_SUPABASE_URL` is `http://127.0.0.1:54321`; `EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY` is printed by `supabase status` (use the new `sb_publishable_…` key, not the legacy `anon` JWT — see [API Keys](https://supabase.com/docs/guides/getting-started/api-keys)).
 
 ## Production (still TODO — see OPEN_QUESTIONS)
 
