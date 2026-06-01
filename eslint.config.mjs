@@ -28,6 +28,7 @@ export default tseslint.config(
       '**/.expo/**',
       '**/.turbo/**',
       'packages/db-types/src/generated/**',
+      'supabase/functions/**', // Deno files — linted by deno lint, not eslint
     ],
   },
 

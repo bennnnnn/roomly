@@ -8,11 +8,14 @@ import { toggleFavorite } from '../api/favorites';
 import { useBrowseListings } from '../hooks/useBrowseListings';
 import { useBrowseFilterStore } from '../stores/browseFilterStore';
 
+import { BrowseMap } from './BrowseMap';
 import { FilterSheet } from './FilterSheet';
 import { ListingCard } from './ListingCard';
 import { LocationSelector } from './LocationSelector';
 
 import type { BrowseListingItem } from '../types';
+
+type ViewMode = 'list' | 'map';
 
 export function BrowseFeed() {
   const router = useRouter();
@@ -22,6 +25,7 @@ export function BrowseFeed() {
   const activeFilterCount = useBrowseFilterStore((s) => s.activeFilterCount);
   const [filterVisible, setFilterVisible] = useState(false);
   const [locationVisible, setLocationVisible] = useState(false);
+  const [viewMode, setViewMode] = useState<ViewMode>('list');
 
   // Favorite toggle mutation
   const favMutation = useMutation({
@@ -106,6 +110,14 @@ export function BrowseFeed() {
               Filters{activeFilterCount() > 0 ? ` (${activeFilterCount()})` : ''}
             </Text>
           </Pressable>
+          <Pressable
+            onPress={() => setViewMode((v) => (v === 'list' ? 'map' : 'list'))}
+            className="rounded-md border border-neutral-200 px-md py-sm dark:border-neutral-700"
+          >
+            <Text className="text-body text-neutral-700 dark:text-neutral-200">
+              {viewMode === 'list' ? '🗺️' : '📋'}
+            </Text>
+          </Pressable>
         </View>
 
         <View testID="browse-empty" className="flex-1 items-center justify-center gap-md p-xl">
@@ -149,27 +161,39 @@ export function BrowseFeed() {
             Filters{activeFilterCount() > 0 ? ` (${activeFilterCount()})` : ''}
           </Text>
         </Pressable>
+        <Pressable
+          onPress={() => setViewMode((v) => (v === 'list' ? 'map' : 'list'))}
+          className="rounded-md border border-neutral-200 px-md py-sm dark:border-neutral-700"
+        >
+          <Text className="text-body text-neutral-700 dark:text-neutral-200">
+            {viewMode === 'list' ? '🗺️' : '📋'}
+          </Text>
+        </Pressable>
       </View>
 
-      {/* List */}
-      <FlatList
-        testID="browse-list"
-        data={items}
-        keyExtractor={(item) => item.id}
-        contentContainerClassName="gap-md px-lg pb-xxl"
-        renderItem={({ item }) => (
-          <ListingCard
-            listing={item}
-            testID={`listing-card-${item.id}`}
-            onPress={() => router.push(`/listing/${item.id}`)}
-            onFavoriteToggle={() => handleFavoriteToggle(item)}
-          />
-        )}
-        onEndReachedThreshold={0.5}
-        onEndReached={() => {
-          // Pagination: future enhancement — load more with the nextCursor
-        }}
-      />
+      {/* List / Map */}
+      {viewMode === 'list' ? (
+        <FlatList
+          testID="browse-list"
+          data={items}
+          keyExtractor={(item) => item.id}
+          contentContainerClassName="gap-md px-lg pb-xxl"
+          renderItem={({ item }) => (
+            <ListingCard
+              listing={item}
+              testID={`listing-card-${item.id}`}
+              onPress={() => router.push(`/listing/${item.id}`)}
+              onFavoriteToggle={() => handleFavoriteToggle(item)}
+            />
+          )}
+          onEndReachedThreshold={0.5}
+          onEndReached={() => {
+            // Pagination: future enhancement — load more with the nextCursor
+          }}
+        />
+      ) : (
+        <BrowseMap listings={items} />
+      )}
 
       <FilterSheet
         visible={filterVisible}
