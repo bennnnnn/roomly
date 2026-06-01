@@ -14,6 +14,7 @@ import js from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import importX from 'eslint-plugin-import-x';
 import prettier from 'eslint-config-prettier';
+import globals from 'globals';
 
 export default tseslint.config(
   // === Global ignores ===
@@ -33,9 +34,13 @@ export default tseslint.config(
   // === JS baseline (applies to everything) ===
   js.configs.recommended,
 
-  // === Type-aware TS rules — only for .ts/.tsx in workspace src/ ===
+  // === Type-aware TS rules — only for .ts/.tsx inside a workspace ===
+  // The glob covers Expo Router's `app/` directory and the conventional `src/`
+  // tree, plus colocated `__tests__/` folders. Root config files (.mjs/.cjs)
+  // are intentionally excluded; they're handled by the override below.
   {
-    files: ['**/src/**/*.{ts,tsx}'],
+    files: ['{apps,packages}/**/*.{ts,tsx}'],
+    ignores: ['**/*.config.{ts,mts}'],
     extends: [...tseslint.configs.recommendedTypeChecked, ...tseslint.configs.stylisticTypeChecked],
     languageOptions: {
       parserOptions: {
@@ -70,6 +75,8 @@ export default tseslint.config(
       'no-console': ['error', { allow: ['warn', 'error'] }],
 
       // === Import hygiene ===
+      // Workspace packages (@roomly/*) live in the "internal" group so they
+      // get a blank-line separator from third-party imports like react-native.
       'import-x/order': [
         'error',
         {
@@ -83,6 +90,8 @@ export default tseslint.config(
             'object',
             'type',
           ],
+          pathGroups: [{ pattern: '@roomly/**', group: 'internal', position: 'before' }],
+          pathGroupsExcludedImportTypes: ['type'],
           'newlines-between': 'always',
           alphabetize: { order: 'asc', caseInsensitive: true },
         },
@@ -109,17 +118,24 @@ export default tseslint.config(
     },
   },
 
-  // === Config files (.js / .mjs / .cjs): no typed linting ===
+  // === Config files (.js / .mjs / .cjs): no typed linting, Node globals on ===
   {
     files: ['**/*.{js,mjs,cjs}'],
     languageOptions: {
       ecmaVersion: 2023,
       sourceType: 'module',
+      globals: { ...globals.node },
       parserOptions: { projectService: false },
     },
     rules: {
       'no-console': 'off',
     },
+  },
+
+  // === Tell ESLint these specific configs are CommonJS, so `module` / `require` / `__dirname` are valid. ===
+  {
+    files: ['**/*.cjs', 'apps/mobile/babel.config.js', 'apps/mobile/metro.config.js'],
+    languageOptions: { sourceType: 'commonjs' },
   },
 
   // === Prettier: must be last; disables stylistic rules that fight the formatter ===
