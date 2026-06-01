@@ -6,6 +6,7 @@ packages:
 # Per AGENTS.md §0 rule 2: nothing runs at install time without review.
 allowBuilds:
   msgpackr-extract: true # native msgpack accelerator used by Metro (Expo SDK 56)
+  sharp: true
   unrs-resolver: true # native rust resolver used by eslint-plugin-import-x
 
 # pnpm 11 minimumReleaseAge gate — packages here have been verified

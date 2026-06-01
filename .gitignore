@@ -51,6 +51,10 @@ test-results/
 # Cursor agent-tools scratch
 agent-tools/
 
+# Claude Code local overrides
+.claude/settings.local.json
+.claude/logs/
+
 # Native build artifacts
 *.xcworkspace
 *.xcuserdata

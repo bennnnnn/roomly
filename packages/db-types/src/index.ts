@@ -38,3 +38,14 @@ export type ListingInsert = Database['public']['Tables']['listings']['Insert'];
 export type ListingUpdate = Database['public']['Tables']['listings']['Update'];
 export type ListingPhotoRow = Database['public']['Tables']['listing_photos']['Row'];
 export type FavoriteRow = Database['public']['Tables']['favorites']['Row'];
+export type PaymentRow = Database['public']['Tables']['payments']['Row'];
+export type PaymentInsert = Database['public']['Tables']['payments']['Insert'];
+export type PaymentType = Database['public']['Enums']['payment_type'];
+export type PaymentStatus = Database['public']['Enums']['payment_status'];
+export type WebhookEventRow = Database['public']['Tables']['webhook_events']['Row'];
+export type ConversationRow = Database['public']['Tables']['conversations']['Row'];
+export type ConversationParticipantRow =
+  Database['public']['Tables']['conversation_participants']['Row'];
+export type ConversationHiddenRow = Database['public']['Tables']['conversation_hidden']['Row'];
+export type MessageRow = Database['public']['Tables']['messages']['Row'];
+export type MessageInsert = Database['public']['Tables']['messages']['Insert'];
