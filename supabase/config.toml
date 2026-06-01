@@ -1,0 +1,73 @@
+# Supabase local-dev config.
+#
+# `supabase init` generates this file. Edits here apply only to local development
+# (`supabase start`) — production is configured in the Supabase Dashboard.
+#
+# Docs: https://supabase.com/docs/guides/cli/config
+
+project_id = "roomly-mvp"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "storage", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+port = 54322
+shadow_port = 54320
+major_version = 15
+
+[db.pooler]
+enabled = false
+
+[db.seed]
+enabled = true
+sql_paths = ["./seed.sql"]
+
+[realtime]
+enabled = true
+
+[studio]
+enabled = true
+port = 54323
+
+[storage]
+enabled = true
+file_size_limit = "50MiB"
+
+[auth]
+enabled = true
+site_url = "roomly://"
+additional_redirect_urls = ["roomly://auth/callback"]
+jwt_expiry = 3600
+enable_signup = true
+enable_anonymous_sign_ins = false
+enable_manual_linking = false
+
+[auth.email]
+enable_signup = true
+double_confirm_changes = true
+enable_confirmations = false  # magic link path doesn't double-confirm
+secure_password_change = true
+otp_expiry = 600
+otp_length = 6
+
+[auth.sms]
+enable_signup = false
+enable_confirmations = false
+
+[auth.external.apple]
+enabled = false  # enable after Apple Developer + Sign in with Apple setup (OQ-004)
+
+[auth.external.google]
+enabled = false  # enable after Google Cloud OAuth setup
+
+[edge_runtime]
+enabled = true
+policy = "oneshot"
+inspector_port = 8083
+
+[analytics]
+enabled = false

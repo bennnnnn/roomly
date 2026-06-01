@@ -11,12 +11,84 @@
  * proper autocomplete on `from('...')` chains for free.
  */
 
+/**
+ * Hand-written stub matching `supabase/migrations/20260531000001_profiles.sql`.
+ *
+ * Slice 1D-X (TBD) will replace this with the output of:
+ *   `supabase gen types typescript --linked > src/generated/database.ts`
+ * tracked by OQ-017.
+ *
+ * Keep this file in sync with the migrations until then — `pnpm typecheck`
+ * is the contract.
+ */
+
+export type AccountType = 'individual' | 'company';
+
+export interface ProfileRow {
+  id: string;
+  display_name: string;
+  avatar_url: string | null;
+  account_type: AccountType;
+  company_name: string | null;
+  company_logo_url: string | null;
+  is_verified: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ProfileInsert {
+  id: string;
+  display_name: string;
+  avatar_url?: string | null;
+  account_type?: AccountType;
+  company_name?: string | null;
+  company_logo_url?: string | null;
+  is_verified?: boolean;
+}
+
+export interface ProfileUpdate {
+  display_name?: string;
+  avatar_url?: string | null;
+  account_type?: AccountType;
+  company_name?: string | null;
+  company_logo_url?: string | null;
+}
+
+export interface BlockRow {
+  blocker_id: string;
+  blocked_id: string;
+  created_at: string;
+}
+
+export interface BlockInsert {
+  blocker_id: string;
+  blocked_id: string;
+}
+
 export interface Database {
   public: {
-    Tables: Record<string, never>;
+    Tables: {
+      profiles: {
+        Row: ProfileRow;
+        Insert: ProfileInsert;
+        Update: ProfileUpdate;
+        Relationships: [];
+      };
+      blocks: {
+        Row: BlockRow;
+        Insert: BlockInsert;
+        Update: Partial<BlockInsert>;
+        Relationships: [];
+      };
+    };
     Views: Record<string, never>;
-    Functions: Record<string, never>;
-    Enums: Record<string, never>;
+    Functions: {
+      is_blocked_between: {
+        Args: { a: string; b: string };
+        Returns: boolean;
+      };
+    };
+    Enums: { account_type: AccountType };
     CompositeTypes: Record<string, never>;
   };
 }
