@@ -79,6 +79,15 @@ Each entry: ID · status · owner · question · why it matters · target slice.
   Per ADR-0008, every Stripe Product must declare a Stripe Tax `tax_code` (e.g. `txcd_10000000` for general digital service). Confirm the correct code with Stripe's tax taxonomy or a CPA before creating the production Products. Wrong code = wrong tax collected = manual reconciliation.
   Target slice: 4.
 
+- **OQ-017 · open · TBD · Provision the production Supabase project.**
+  Slice 1E ships the schema (`supabase/migrations/*`) and pgTAP tests but cannot apply them — no project exists. Action: create project at https://supabase.com/dashboard, run `supabase link --project-ref <ref>`, `supabase db push`, then `supabase gen types typescript --linked > packages/db-types/src/generated/database.ts` and swap the hand-written stub.
+  Why: blocks **any** end-to-end auth flow on a real device. Local-dev still works via `supabase start` against the local stack.
+  Target slice: 1F or sooner.
+
+- **OQ-018 · open · agent · CI for pgTAP RLS tests.**
+  `supabase/tests/profiles_rls.sql` exists but is not run in CI. Cheapest path: a GitHub Actions job that runs `supabase start` (slow first cold-start), `supabase db reset`, `supabase test db`. Alternative: a Docker-Compose Postgres + pgTAP image. Add when first non-trivial RLS edit lands.
+  Target slice: 2 (Listings — first time RLS gets complex enough to regress).
+
 ---
 
 ## Resolved
