@@ -5,7 +5,7 @@
 
 begin;
 
-select plan(10);
+select plan(12);
 
 -- ============================================================================
 -- 1. RLS is enabled on the right tables.

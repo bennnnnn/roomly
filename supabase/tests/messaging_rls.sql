@@ -88,16 +88,18 @@ select lives_ok(
 -- Non-participant cannot insert a message
 -- ============================================================================
 
+-- Outsider needs a concrete conversation_id; they cannot SELECT conversations under RLS.
+set local role = service_role;
+
+create temp table _test_conv as
+select id from public.conversations where listing_id = '00000000-0000-0000-0000-000000000020' limit 1;
+
+set local role = authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000012';
 
 select throws_ok(
   $$ insert into public.messages (conversation_id, sender_id, body)
-     select c.id,
-            '00000000-0000-0000-0000-000000000012',
-            'Sneaking in'
-     from public.conversations c
-     where c.listing_id = '00000000-0000-0000-0000-000000000020'
-     limit 1 $$,
+     select id, '00000000-0000-0000-0000-000000000012', 'Sneaking in' from _test_conv $$,
   '42501',
   null,
   'non-participant cannot insert a message'
