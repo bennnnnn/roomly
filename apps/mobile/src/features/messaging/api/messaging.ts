@@ -1,24 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any */
-// ^ Messaging tables (Slice 5 migration) aren't in the generated Database type
-//   yet. Remove this disable once pnpm db:types runs after the migration is applied.
-
 import { supabase } from '../../../lib/supabaseClient';
 
 import type { ConversationItem, MessageItem } from '../types';
-
-/**
- * Helper: returns a weakly-typed view of the supabase client for tables that
- * the generated Database type hasn't picked up yet (migration not yet applied
- * locally when `pnpm db:types` was last run).
- *
- * Remove this once migration 20260601160000_messaging is applied and types
- * are regenerated.
- */
-function db(): Record<string, any> {
-  // We cast through unknown so the strongly-typed client for registered tables
-  // is still available everywhere else.
-  return supabase;
-}
 
 interface ConvRow {
   conversation_id: string;
@@ -38,8 +20,20 @@ interface ConvRow {
   };
 }
 
+export async function createConversation(listingId: string, hostUserId: string): Promise<string> {
+  const { data, error } = await supabase.rpc('create_conversation', {
+    p_listing_id: listingId,
+    p_other_user_id: hostUserId,
+  });
+  if (error) throw error;
+  if (typeof data !== 'string') {
+    throw new Error('Could not start conversation');
+  }
+  return data;
+}
+
 export async function fetchConversations(): Promise<ConversationItem[]> {
-  const { data, error } = await db()
+  const { data, error } = await supabase
     .from('conversation_participants')
     .select(
       `conversation_id, conversations!inner(id, listing_id, last_message_at, listings!inner(id, title, listing_photos(storage_path, is_cover, sort_order)))`,
@@ -83,7 +77,7 @@ export async function fetchMessages(conversationId: string, limit = 50): Promise
   const { data: userData } = await supabase.auth.getUser();
   const myId = userData?.user?.id ?? '';
 
-  const { data, error } = await db()
+  const { data, error } = await supabase
     .from('messages')
     .select('id, conversation_id, sender_id, body, created_at')
     .eq('conversation_id', conversationId)
@@ -92,7 +86,7 @@ export async function fetchMessages(conversationId: string, limit = 50): Promise
     .limit(limit);
 
   if (error) throw error;
-  const rows = (data ?? []) as unknown as MsgRow[];
+  const rows = (data ?? []) as MsgRow[];
 
   return rows.map((row) => ({
     id: row.id,
@@ -109,7 +103,7 @@ export async function sendMessage(conversationId: string, body: string): Promise
   const myId = userData?.user?.id;
   if (!myId) throw new Error('Sign in to send messages');
 
-  const { data, error } = await db()
+  const { data, error } = await supabase
     .from('messages')
     .insert({
       conversation_id: conversationId,
@@ -120,20 +114,18 @@ export async function sendMessage(conversationId: string, body: string): Promise
     .single();
 
   if (error) throw error;
-  const row = data as unknown as MsgRow;
 
-  // Bump last_message_at on the conversation
-  await db()
+  await supabase
     .from('conversations')
     .update({ last_message_at: new Date().toISOString() })
     .eq('id', conversationId);
 
   return {
-    id: row.id,
-    conversationId: row.conversation_id,
-    senderId: row.sender_id,
-    body: row.body,
-    createdAt: row.created_at,
+    id: data.id,
+    conversationId: data.conversation_id,
+    senderId: data.sender_id,
+    body: data.body,
+    createdAt: data.created_at,
     isMine: true,
   };
 }

@@ -13,6 +13,8 @@ interface ListingRow {
   price_cents: number;
   type: ListingType;
   area_label: string;
+  lat: number;
+  lng: number;
   available_from: string;
   has_own_bath: boolean;
   has_shared_bath: boolean;
@@ -21,8 +23,16 @@ interface ListingRow {
   listing_photos: { storage_path: string; is_cover: boolean; sort_order: number }[];
 }
 
+export interface BrowseLocationFilter {
+  lat: number;
+  lng: number;
+  /** Approximate radius in km (default 50). */
+  radiusKm?: number;
+}
+
 export interface BrowseQueryParams {
   filters: ListingFilters;
+  location?: BrowseLocationFilter | null;
   favoriteIds?: Set<string> | undefined;
   pageSize?: number;
   cursor?: string | undefined;
@@ -38,12 +48,12 @@ export interface BrowseResult {
  * When `favoriteIds` is provided, each item's `isFavorite` flag is populated.
  */
 export async function fetchBrowseListings(params: BrowseQueryParams): Promise<BrowseResult> {
-  const { filters, favoriteIds, pageSize = 24, cursor } = params;
+  const { filters, location, favoriteIds, pageSize = 24, cursor } = params;
 
   let query = supabase
     .from('listings')
     .select(
-      `id, title, price_cents, type, area_label, available_from,
+      `id, title, price_cents, type, area_label, lat, lng, available_from,
        has_own_bath, has_shared_bath, pets_allowed, furnished,
        listing_photos (storage_path, is_cover, sort_order)`,
       { count: 'exact' },
@@ -84,6 +94,17 @@ export async function fetchBrowseListings(params: BrowseQueryParams): Promise<Br
   // Availability
   if (filters.availableAfter) {
     query = query.gte('available_from', filters.availableAfter);
+  }
+
+  // Geo bounding box (skip when coords are unset)
+  if (location && location.lat !== 0 && location.lng !== 0) {
+    const radiusKm = location.radiusKm ?? 50;
+    const delta = radiusKm / 111;
+    query = query
+      .gte('lat', location.lat - delta)
+      .lte('lat', location.lat + delta)
+      .gte('lng', location.lng - delta)
+      .lte('lng', location.lng + delta);
   }
 
   // Cursor pagination
@@ -127,6 +148,8 @@ export async function fetchBrowseListings(params: BrowseQueryParams): Promise<Br
       priceCents: row.price_cents,
       type: row.type,
       areaLabel: row.area_label,
+      lat: row.lat,
+      lng: row.lng,
       availableFrom: row.available_from,
       hasOwnBath: row.has_own_bath,
       hasSharedBath: row.has_shared_bath,

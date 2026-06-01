@@ -2,6 +2,8 @@ import { useLocalSearchParams } from 'expo-router';
 import { useCallback, useRef, useState } from 'react';
 import { FlatList, Text, TextInput, View, KeyboardAvoidingView, Platform } from 'react-native';
 
+import { maskContactInfo } from '@roomly/lib';
+
 import { sendMessage } from '../../src/features/messaging/api/messaging';
 import { useMessages } from '../../src/features/messaging/hooks/useMessages';
 
@@ -19,7 +21,7 @@ function MessageBubble({ message }: { message: MessageItem }) {
           message.isMine ? 'text-neutral-0' : 'text-neutral-900 dark:text-neutral-0'
         }`}
       >
-        {message.body}
+        {maskContactInfo(message.body)}
       </Text>
     </View>
   );

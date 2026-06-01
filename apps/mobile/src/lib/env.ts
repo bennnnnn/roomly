@@ -34,6 +34,7 @@ export const env = defineEnv(
     EXPO_PUBLIC_SENTRY_DSN: { required: false, visibility: 'public' },
     EXPO_PUBLIC_POSTHOG_API_KEY: { required: false, visibility: 'public' },
     EXPO_PUBLIC_POSTHOG_HOST: { required: false, visibility: 'public' },
+    EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY: { required: false, visibility: 'public' },
   },
   {
     runtime: 'client',

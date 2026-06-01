@@ -9,10 +9,18 @@ import type { ListingDetail } from '../types';
 export interface ListingDetailBodyProps {
   listing: ListingDetail;
   onEdit: () => void;
+  onMessage?: (() => void) | undefined;
+  messageBusy?: boolean | undefined;
   testID?: string | undefined;
 }
 
-export function ListingDetailBody({ listing, onEdit, testID }: ListingDetailBodyProps) {
+export function ListingDetailBody({
+  listing,
+  onEdit,
+  onMessage,
+  messageBusy = false,
+  testID,
+}: ListingDetailBodyProps) {
   const hero = listing.photos[0]?.signedUrl ?? listing.coverPhotoUrl;
 
   return (
@@ -60,16 +68,14 @@ export function ListingDetailBody({ listing, onEdit, testID }: ListingDetailBody
           <Button label="Edit listing" variant="secondary" onPress={onEdit} testID="listing-edit" />
         ) : (
           <Button
-            label="Message host"
+            label={messageBusy ? 'Opening chat…' : 'Message host'}
             variant="primary"
-            disabled
+            disabled={listing.status !== 'active' || messageBusy || !onMessage}
+            loading={messageBusy}
             testID="listing-message"
-            onPress={() => undefined}
+            onPress={() => onMessage?.()}
           />
         )}
-        {!listing.isOwner ? (
-          <Text className="text-caption text-neutral-500">Messaging lands in Slice 5.</Text>
-        ) : null}
       </View>
     </ScrollView>
   );

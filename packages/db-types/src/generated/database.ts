@@ -394,6 +394,33 @@ export type Database = {
           },
         ]
       }
+      pricing_tiers: {
+        Row: {
+          active_stripe_price_id: string
+          amount_cents: number
+          currency: string
+          tier_key: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          active_stripe_price_id: string
+          amount_cents: number
+          currency?: string
+          tier_key: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          active_stripe_price_id?: string
+          amount_cents?: number
+          currency?: string
+          tier_key?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           account_type: Database["public"]["Enums"]["account_type"]
@@ -427,6 +454,33 @@ export type Database = {
           id?: string
           is_verified?: boolean
           updated_at?: string
+        }
+        Relationships: []
+      }
+      reports: {
+        Row: {
+          created_at: string
+          id: string
+          reason: string
+          reporter_id: string
+          target_id: string
+          target_type: Database["public"]["Enums"]["report_target_type"]
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          reason: string
+          reporter_id: string
+          target_id: string
+          target_type: Database["public"]["Enums"]["report_target_type"]
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          reason?: string
+          reporter_id?: string
+          target_id?: string
+          target_type?: Database["public"]["Enums"]["report_target_type"]
         }
         Relationships: []
       }
@@ -475,6 +529,7 @@ export type Database = {
         | "extra_house"
       payment_status: "succeeded" | "failed" | "refunded"
       payment_type: "listing_create" | "listing_multi" | "listing_renew"
+      report_target_type: "listing" | "message" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1066,6 +1121,7 @@ export const Constants = {
       ],
       payment_status: ["succeeded", "failed", "refunded"],
       payment_type: ["listing_create", "listing_multi", "listing_renew"],
+      report_target_type: ["listing", "message", "user"],
     },
   },
   storage: {

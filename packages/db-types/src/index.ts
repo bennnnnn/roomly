@@ -49,3 +49,6 @@ export type ConversationParticipantRow =
 export type ConversationHiddenRow = Database['public']['Tables']['conversation_hidden']['Row'];
 export type MessageRow = Database['public']['Tables']['messages']['Row'];
 export type MessageInsert = Database['public']['Tables']['messages']['Insert'];
+export type ReportRow = Database['public']['Tables']['reports']['Row'];
+export type ReportTargetType = Database['public']['Enums']['report_target_type'];
+export type PricingTierRow = Database['public']['Tables']['pricing_tiers']['Row'];

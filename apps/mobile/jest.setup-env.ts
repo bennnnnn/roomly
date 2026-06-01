@@ -6,6 +6,7 @@
 // in a real build (jest is dev-only).
 process.env.EXPO_PUBLIC_SUPABASE_URL ??= 'https://test.supabase.co';
 process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY ??= 'sb_publishable_test_key';
+process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY ??= 'pk_test_placeholder';
 
 // AsyncStorage's native module isn't available under jest. The package ships
 // an official in-memory mock; register it globally so any module that imports

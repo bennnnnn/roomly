@@ -11,6 +11,8 @@ interface ListingRow {
   price_cents: number;
   type: ListingType;
   area_label: string;
+  lat: number;
+  lng: number;
   available_from: string;
   has_own_bath: boolean;
   has_shared_bath: boolean;
@@ -25,7 +27,7 @@ export async function fetchSavedListings(): Promise<BrowseListingItem[]> {
     .select(
       `listing_id,
        listings!inner (
-         id, title, price_cents, type, area_label, available_from,
+         id, title, price_cents, type, area_label, lat, lng, available_from,
          has_own_bath, has_shared_bath, pets_allowed, furnished,
          listing_photos (storage_path, is_cover, sort_order)
        )`,
@@ -51,6 +53,8 @@ export async function fetchSavedListings(): Promise<BrowseListingItem[]> {
       priceCents: row.price_cents,
       type: row.type,
       areaLabel: row.area_label,
+      lat: row.lat,
+      lng: row.lng,
       availableFrom: row.available_from,
       hasOwnBath: row.has_own_bath,
       hasSharedBath: row.has_shared_bath,

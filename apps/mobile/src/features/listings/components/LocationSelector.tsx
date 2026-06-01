@@ -1,3 +1,4 @@
+import * as Location from 'expo-location';
 import { useState } from 'react';
 import { Modal, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 
@@ -38,10 +39,21 @@ export function LocationSelector({ visible, onClose }: LocationSelectorProps) {
   };
 
   const handleUseCurrent = () => {
-    // Sets a generic "current location" marker. The actual geolocation
-    // can be wired up when expo-location is installed (Slice 3 TODO).
-    setLocation({ label: 'My location', lat: 0, lng: 0 });
-    onClose();
+    void (async () => {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== Location.PermissionStatus.GRANTED) {
+        return;
+      }
+      const position = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.Balanced,
+      });
+      setLocation({
+        label: 'Near me',
+        lat: position.coords.latitude,
+        lng: position.coords.longitude,
+      });
+      onClose();
+    })();
   };
 
   const handleSearch = () => {

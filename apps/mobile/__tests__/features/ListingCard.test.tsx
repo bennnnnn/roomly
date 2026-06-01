@@ -10,6 +10,8 @@ const listing: BrowseListingItem = {
   priceCents: 120000,
   type: 'single_bedroom',
   areaLabel: 'Mission',
+  lat: 37.76,
+  lng: -122.42,
   availableFrom: '2026-07-01',
   hasOwnBath: true,
   hasSharedBath: false,

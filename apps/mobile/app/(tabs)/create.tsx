@@ -25,7 +25,7 @@ export default function Create() {
         List your place
       </Text>
       <Text className="text-center text-body text-neutral-500 dark:text-neutral-300">
-        Seven-step wizard with photo upload and drafts. Payment to go live lands in Slice 4.
+        Seven-step wizard with photos and drafts. Pay to publish when you are ready.
       </Text>
       <Button label="Start listing" onPress={startWizard} testID="tab-create-start" />
     </View>

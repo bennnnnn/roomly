@@ -2,10 +2,13 @@
 // are available for every screen the Router mounts.
 import '../global.css';
 
+import * as Linking from 'expo-linking';
 import { Stack } from 'expo-router';
 import { useEffect } from 'react';
 
+import { createSessionFromUrl } from '../src/lib/authDeepLink';
 import { QueryProvider } from '../src/providers/QueryProvider';
+import { AppStripeProvider } from '../src/providers/StripeProvider';
 import { bootstrapSession } from '../src/state/session';
 
 export default function RootLayout() {
@@ -17,9 +20,22 @@ export default function RootLayout() {
     return cleanup;
   }, []);
 
+  useEffect(() => {
+    const handleUrl = (event: { url: string }) => {
+      void createSessionFromUrl(event.url).catch(() => undefined);
+    };
+    const sub = Linking.addEventListener('url', handleUrl);
+    void Linking.getInitialURL().then((url) => {
+      if (url) void createSessionFromUrl(url).catch(() => undefined);
+    });
+    return () => sub.remove();
+  }, []);
+
   return (
-    <QueryProvider>
-      <Stack screenOptions={{ headerShown: false }} />
-    </QueryProvider>
+    <AppStripeProvider>
+      <QueryProvider>
+        <Stack screenOptions={{ headerShown: false }} />
+      </QueryProvider>
+    </AppStripeProvider>
   );
 }

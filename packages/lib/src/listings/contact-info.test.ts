@@ -1,4 +1,4 @@
-import { detectContactInfo, hasContactInfo } from './contact-info';
+import { detectContactInfo, hasContactInfo, maskContactInfo } from './contact-info';
 
 describe('detectContactInfo', () => {
   it('flags email addresses', () => {
@@ -20,6 +20,10 @@ describe('detectContactInfo', () => {
 
   it('flags social handles', () => {
     expect(hasContactInfo('DM me @hostname')).toBe(true);
+  });
+
+  it('masks detected contact info', () => {
+    expect(maskContactInfo('Email host@example.com')).toBe('Email [contact info removed]');
   });
 
   it('classifies match kinds', () => {

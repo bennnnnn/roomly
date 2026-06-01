@@ -43,3 +43,14 @@ export function detectContactInfo(text: string): ContactInfoMatch[] {
 export function hasContactInfo(text: string): boolean {
   return detectContactInfo(text).length > 0;
 }
+
+const MASK = '[contact info removed]';
+
+/** Masks detected contact-info patterns for display (server should also flag). */
+export function maskContactInfo(text: string): string {
+  let out = text;
+  for (const pattern of PATTERNS) {
+    out = out.replace(pattern, MASK);
+  }
+  return out;
+}

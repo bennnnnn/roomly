@@ -16,6 +16,9 @@ export interface BrowseListingItem {
   priceCents: number;
   type: ListingType;
   areaLabel: string;
+  /** Public area coordinates (map uses fuzzy offset). */
+  lat: number;
+  lng: number;
   availableFrom: string;
   hasOwnBath: boolean;
   hasSharedBath: boolean;

@@ -106,8 +106,26 @@ export default function MyListings() {
             <Text className="text-caption text-neutral-500">
               ${(item.price_cents / 100).toFixed(2)}/mo · {item.area_label}
             </Text>
-            <View className="mt-sm flex-row gap-md">
+            <View className="mt-sm flex-row items-center justify-between">
               <Text className="text-caption text-neutral-400">{item.view_count} views</Text>
+              <View className="flex-row gap-sm">
+                {item.status === 'draft' || item.status === 'expired' ? (
+                  <Button
+                    label={item.status === 'expired' ? 'Renew' : 'Pay & publish'}
+                    variant="primary"
+                    onPress={() => router.push(`/listing/${item.id}/payment`)}
+                    testID={`my-listings-pay-${item.id}`}
+                  />
+                ) : null}
+                {item.status === 'draft' ? (
+                  <Button
+                    label="Edit"
+                    variant="secondary"
+                    onPress={() => router.push(`/listing/${item.id}/edit`)}
+                    testID={`my-listings-edit-${item.id}`}
+                  />
+                ) : null}
+              </View>
             </View>
           </Pressable>
         )}

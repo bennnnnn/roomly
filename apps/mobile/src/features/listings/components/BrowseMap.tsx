@@ -3,6 +3,8 @@ import { useCallback } from 'react';
 import { Text, View } from 'react-native';
 import MapView, { Marker, type Region } from 'react-native-maps';
 
+import { fuzzyMapCoordinate } from '../lib/fuzzyMapCoordinate';
+
 import type { BrowseListingItem } from '../types';
 
 interface BrowseMapProps {
@@ -44,14 +46,7 @@ export function BrowseMap({ listings }: BrowseMapProps) {
       {listings.map((listing) => (
         <Marker
           key={listing.id}
-          coordinate={{
-            // Coordinates are approximate — exact lat/lng are only
-            // available in the full ListingDetail. The browse feed
-            // shows area-level markers via the listing detail fetch.
-            // For now, we use a simple clustering approach.
-            latitude: 40.7 + Math.random() * 0.5,
-            longitude: -74.0 + Math.random() * 0.5,
-          }}
+          coordinate={fuzzyMapCoordinate(listing.id, listing.lat, listing.lng)}
           title={listing.title}
           description={`$${(listing.priceCents / 100).toFixed(2)}/mo · ${listing.areaLabel}`}
           onCalloutPress={() => handleMarkerPress(listing.id)}

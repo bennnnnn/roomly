@@ -11,27 +11,36 @@ export function useConversations() {
     queryKey: ['conversations'],
     queryFn: fetchConversations,
     staleTime: 10_000,
+    refetchInterval: 20_000,
   });
 
-  // Realtime subscription: refresh the list when a new message arrives.
+  // Scoped Realtime: refresh when this user's participant row changes (e.g. re-join).
   useEffect(() => {
-    const channel = supabase
-      .channel('conversations-list')
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'messages',
-        },
-        () => {
-          void queryClient.invalidateQueries({ queryKey: ['conversations'] });
-        },
-      )
-      .subscribe();
+    let channel: ReturnType<typeof supabase.channel> | undefined;
+
+    void supabase.auth.getUser().then(({ data }) => {
+      const uid = data.user?.id;
+      if (!uid) return;
+
+      channel = supabase
+        .channel(`conversations-participant-${uid}`)
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'conversation_participants',
+            filter: `user_id=eq.${uid}`,
+          },
+          () => {
+            void queryClient.invalidateQueries({ queryKey: ['conversations'] });
+          },
+        )
+        .subscribe();
+    });
 
     return () => {
-      void channel.unsubscribe();
+      void channel?.unsubscribe();
     };
   }, [queryClient]);
 

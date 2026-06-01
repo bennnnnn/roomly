@@ -9,14 +9,26 @@ const Input = z.object({
   listingId: z.string().uuid(),
 });
 
-const PRICING = {
-  /** First active listing: $9.99/mo */
-  FIRST: 999,
-  /** Additional listings (flat covers all extras): $17.99/mo */
-  ADDITIONAL: 1799,
-  /** Re-list after expiry: $9.99 */
-  RENEW: 999,
-} as const;
+const FALLBACK_CENTS: Record<'first_listing' | 'additional_listing' | 'renew', number> = {
+  first_listing: 999,
+  additional_listing: 1799,
+  renew: 999,
+};
+
+async function amountForTier(
+  svc: ReturnType<typeof createServiceClient>,
+  tierKey: keyof typeof FALLBACK_CENTS,
+): Promise<number> {
+  const { data, error } = await svc
+    .from('pricing_tiers')
+    .select('amount_cents')
+    .eq('tier_key', tierKey)
+    .maybeSingle();
+  if (error || !data?.amount_cents) {
+    return FALLBACK_CENTS[tierKey];
+  }
+  return data.amount_cents as number;
+}
 
 Deno.serve(async (req: Request) => {
   if (req.method !== 'POST') return httpError(405, 'method_not_allowed');
@@ -51,9 +63,10 @@ Deno.serve(async (req: Request) => {
     return httpError(409, 'listing_already_active');
   }
 
-  // --- Determine price (server-computed) ---
+  // --- Determine price (server-computed from pricing_tiers, ADR-0008) ---
   let amount: number;
   let paymentType: 'listing_create' | 'listing_multi' | 'listing_renew';
+  let tierKey: keyof typeof FALLBACK_CENTS;
 
   const activeCount = await svc
     .rpc('get_active_listing_count', { p_user_id: user.id })
@@ -64,18 +77,17 @@ Deno.serve(async (req: Request) => {
     .catch(() => 0);
 
   if (listing.status === 'expired') {
-    // Re-list
-    amount = PRICING.RENEW;
+    tierKey = 'renew';
     paymentType = 'listing_renew';
   } else if (activeCount === 0) {
-    // First listing
-    amount = PRICING.FIRST;
+    tierKey = 'first_listing';
     paymentType = 'listing_create';
   } else {
-    // Additional listing
-    amount = PRICING.ADDITIONAL;
+    tierKey = 'additional_listing';
     paymentType = 'listing_multi';
   }
+
+  amount = await amountForTier(svc, tierKey);
 
   // --- Create Stripe PaymentIntent ---
   const stripeSecret = Deno.env.get('STRIPE_SECRET_KEY');

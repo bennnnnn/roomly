@@ -36,3 +36,12 @@ Enums: `payment_type`, `payment_status`.
 | `conversation_participants` | Members (renter + host)                |
 | `conversation_hidden`       | Per-user soft-delete                   |
 | `messages`                  | Chat messages; Realtime with `filter:` |
+
+## Hardening (2026-06-01)
+
+| Table           | Purpose                                         |
+| --------------- | ----------------------------------------------- |
+| `pricing_tiers` | Tier → Stripe Price id + cached cents (Edge Fn) |
+| `reports`       | User-submitted moderation reports               |
+
+Message insert trigger masks contact info server-side and sets `flagged`.
