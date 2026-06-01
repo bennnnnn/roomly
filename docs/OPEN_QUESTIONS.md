@@ -70,6 +70,15 @@ Each entry: ID · status · owner · question · why it matters · target slice.
   Apple/Google built-in vs Mapbox vs OpenStreetMap Nominatim.
   Recommendation: native platform geocoder for the address-autocomplete step; verify rate limits before launch.
 
+- **OQ-015 · open · agent · Promo / discount mechanism for listing fees.**
+  Per ADR-0008, the `pricing_tiers` model only carries one active Price per tier. For promos (launch discount, referral, "first month $0"), choose between (a) Stripe Coupons applied to the PaymentIntent (Stripe owns the discount math), or (b) introducing a `promo_tier_key` overlay row in `pricing_tiers` with a TTL.
+  Why: blocks any marketing experiment in Slice 4+. Decide before the first promo ships, not before; default for MVP launch is "no promos."
+  Target slice: 4.
+
+- **OQ-016 · open · agent · Stripe Tax `tax_code` for the listing fee.**
+  Per ADR-0008, every Stripe Product must declare a Stripe Tax `tax_code` (e.g. `txcd_10000000` for general digital service). Confirm the correct code with Stripe's tax taxonomy or a CPA before creating the production Products. Wrong code = wrong tax collected = manual reconciliation.
+  Target slice: 4.
+
 ---
 
 ## Resolved
