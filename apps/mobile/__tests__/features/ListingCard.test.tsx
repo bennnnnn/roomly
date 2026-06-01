@@ -16,6 +16,7 @@ const listing: BrowseListingItem = {
   petsAllowed: false,
   furnished: true,
   coverPhotoUrl: null,
+  isFavorite: false,
 };
 
 describe('ListingCard', () => {
