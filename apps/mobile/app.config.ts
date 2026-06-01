@@ -21,7 +21,16 @@ const config: ExpoConfig = {
   web: {
     bundler: 'metro',
   },
-  plugins: ['expo-router'],
+  plugins: [
+    'expo-router',
+    [
+      'expo-image-picker',
+      {
+        photosPermission: 'Roomly needs access to your photos so you can add listing images.',
+        cameraPermission: 'Roomly needs camera access so you can take listing photos.',
+      },
+    ],
+  ],
 };
 
 export default config;
