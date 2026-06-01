@@ -37,8 +37,7 @@ Deno.test('pricing: first listing is $9.99', () => {
 
 Deno.test('pricing: additional listing is $17.99', () => {
   const PRICING = { FIRST: 999, ADDITIONAL: 1799, RENEW: 999 };
-  // ≥1 active listing → additional price
-  const activeCount = 1;
+  const activeCount: number = 1;
   const amount = activeCount === 0 ? PRICING.FIRST : PRICING.ADDITIONAL;
   assertEquals(amount, 1799);
 });
