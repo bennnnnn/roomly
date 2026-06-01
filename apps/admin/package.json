@@ -11,6 +11,16 @@
   },
   "dependencies": {
     "@roomly/lib": "workspace:*",
-    "@roomly/ui-tokens": "workspace:*"
+    "@roomly/ui-tokens": "workspace:*",
+    "@supabase/ssr": "^0.10.3",
+    "@supabase/supabase-js": "2.106.2",
+    "@types/react": "^19.2.15",
+    "@types/react-dom": "^19.2.3",
+    "autoprefixer": "^10.5.0",
+    "next": "^15.5.18",
+    "postcss": "^8.5.15",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6",
+    "tailwindcss": "^3.4.19"
   }
 }
