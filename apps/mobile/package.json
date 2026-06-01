@@ -15,8 +15,11 @@
   },
   "dependencies": {
     "@expo/metro-runtime": "56.0.13",
+    "@react-native-async-storage/async-storage": "2.2.0",
+    "@roomly/db-types": "workspace:*",
     "@roomly/lib": "workspace:*",
     "@roomly/ui-tokens": "workspace:*",
+    "@supabase/supabase-js": "2.106.2",
     "expo": "56.0.8",
     "expo-constants": "56.0.16",
     "expo-linking": "56.0.13",
@@ -31,7 +34,8 @@
     "react-native-reanimated": "4.4.0",
     "react-native-safe-area-context": "5.8.0",
     "react-native-screens": "4.25.2",
-    "react-native-worklets": "0.9.1"
+    "react-native-worklets": "0.9.1",
+    "zustand": "5.0.14"
   },
   "devDependencies": {
     "@babel/core": "7.29.7",

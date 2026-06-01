@@ -9,6 +9,10 @@
 module.exports = {
   preset: 'jest-expo',
   testMatch: ['**/__tests__/**/*.test.{ts,tsx}'],
+  // setupFiles runs BEFORE the test framework — needed so env stubs are in
+  // place before apps/mobile/src/lib/env.ts is module-evaluated by any
+  // import chain.
+  setupFiles: ['<rootDir>/jest.setup-env.ts'],
   // jest-expo's transformIgnorePatterns already knows about pnpm's `.pnpm/`
   // layout and the RN / Expo families, so we keep its defaults intact and
   // only add what's specific to Roomly.
@@ -20,5 +24,7 @@ module.exports = {
     '^@roomly/lib$': '<rootDir>/../../packages/lib/src/index.ts',
     '^@roomly/lib/(.*)$': '<rootDir>/../../packages/lib/src/$1',
     '^@roomly/ui-tokens$': '<rootDir>/../../packages/ui-tokens/src/index.ts',
+    '^@roomly/ui-tokens/(.*)$': '<rootDir>/../../packages/ui-tokens/src/$1',
+    '^@roomly/db-types$': '<rootDir>/../../packages/db-types/src/index.ts',
   },
 };
