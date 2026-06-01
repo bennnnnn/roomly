@@ -1,9 +1,24 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "rootDir": "src",
-    "outDir": "dist",
-    "types": ["node"]
+    "jsx": "react-jsx",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "lib": ["ES2023", "DOM"],
+    "types": ["node", "jest", "react", "react-native"],
+    "allowJs": false,
+    "rootDir": ".",
+    "outDir": "dist"
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx"]
+  "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    ".expo",
+    "ios",
+    "android",
+    "babel.config.js",
+    "metro.config.js",
+    "jest.config.cjs"
+  ]
 }

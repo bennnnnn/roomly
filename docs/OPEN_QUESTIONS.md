@@ -43,6 +43,14 @@ Each entry: ID · status · owner · question · why it matters · target slice.
 
 ---
 
+## Technical debt to revisit
+
+| ID    | Item                                                                                                                                                                                                                                                          | Trigger to revisit                                |
+| ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
+| TD-01 | Pinned to `jest@29.7.0` because `jest-expo@56` peer-depends on Jest 29 internals. Upgrade to Jest 30 once jest-expo ships a compatible release.                                                                                                               | jest-expo 57 release (or 56.x bumping Jest peer). |
+| TD-02 | Moderate `uuid` GHSA in the Expo CLI build chain (see ADR-0007 audit policy table). Acceptable because it only runs at `expo prebuild`/EAS Build.                                                                                                             | Expo SDK 57 or any `@expo/cli` minor bump.        |
+| TD-03 | GitHub Actions runner deprecation: `actions/checkout@v4`, `actions/setup-node@v4`, `pnpm/action-setup@v4` still run on Node 20 inside the runner. GitHub forces Node 24 default on 2026-06-16. Verify these still work by then, or pin newer action versions. | 2026-06-16.                                       |
+
 ## Technical decisions still open
 
 - **OQ-010 · open · agent · Admin auth strategy.**

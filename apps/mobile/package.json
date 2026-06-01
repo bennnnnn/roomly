@@ -2,15 +2,40 @@
   "name": "@roomly/mobile",
   "version": "0.0.0",
   "private": true,
-  "description": "Roomly mobile app (Expo SDK 56 + React Native + Expo Router). Scaffolded in Slice 1.",
-  "type": "module",
+  "description": "Roomly mobile app — Expo SDK 56 + Expo Router. Auth screens land in Slice 1B.",
+  "main": "index.ts",
   "scripts": {
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
-    "test": "echo 'no tests yet — Slice 1 adds them' && exit 0"
+    "test": "jest",
+    "start": "expo start",
+    "ios": "expo start --ios",
+    "android": "expo start --android",
+    "web": "expo start --web"
   },
   "dependencies": {
+    "@expo/metro-runtime": "56.0.13",
     "@roomly/lib": "workspace:*",
-    "@roomly/ui-tokens": "workspace:*"
+    "@roomly/ui-tokens": "workspace:*",
+    "expo": "56.0.8",
+    "expo-constants": "56.0.16",
+    "expo-linking": "56.0.13",
+    "expo-router": "56.2.8",
+    "expo-status-bar": "56.0.4",
+    "expo-system-ui": "56.0.5",
+    "react": "19.2.6",
+    "react-dom": "19.2.6",
+    "react-native": "0.85.3",
+    "react-native-gesture-handler": "3.0.0",
+    "react-native-safe-area-context": "5.8.0",
+    "react-native-screens": "4.25.2"
+  },
+  "devDependencies": {
+    "@babel/core": "7.29.7",
+    "@testing-library/react-native": "13.3.3",
+    "@types/react": "19.2.15",
+    "babel-preset-expo": "56.0.14",
+    "jest-expo": "56.0.4",
+    "react-test-renderer": "19.2.6"
   }
 }
