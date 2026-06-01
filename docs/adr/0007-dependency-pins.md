@@ -152,6 +152,21 @@ The admin Tailwind config (Slice 7) will import the same `@roomly/ui-tokens/tail
 - `nativewind/preset` ships an **empty** `dist/tailwind/index.d.ts`, so TypeScript reports "is not a module" if you `import` it. Worked around with an ambient `declare module 'nativewind/preset'` in `apps/mobile/nativewind-env.d.ts`. Track upstream — remove the declaration when fixed.
 - `declare module '*.css'` is also needed in the same file so `import '../global.css'` typechecks. This is a TS hygiene fix, not a runtime concern.
 
+## Verified at Slice 1C install (2026-05-31)
+
+Foundation deps for env, logger, Supabase client, and Zustand session store. See ADR-0008 (pricing) and ADR-0009 (env-var boundaries) for the consuming contracts.
+
+| Package                                     | Version   | Source                                      | Notes                                                                                                                                        |
+| ------------------------------------------- | --------- | ------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| `@supabase/supabase-js`                     | `2.106.2` | `npm view @supabase/supabase-js version`    | Already pinned at project start (re-verified). v3 still `next.*` preview.                                                                    |
+| `zustand`                                   | `5.0.14`  | `npm view zustand version`                  | Already pinned at project start (re-verified). v5's `create<T>()` selector signature is the one used in `apps/mobile/src/state/session.ts`.  |
+| `@react-native-async-storage/async-storage` | `2.2.0`   | `expo/bundledNativeModules.json` for SDK 56 | **Not** npm latest (3.1.1) — Expo SDK 56 hasn't tested 3.x. `npx expo install` would pick 2.2.0; we match. Re-evaluate when SDK 57 bumps it. |
+
+### Tooling change
+
+- `apps/mobile/jest.config.cjs` gained `setupFiles: ['<rootDir>/jest.setup-env.ts']` so env stubs and the AsyncStorage mock are registered before any test module loads.
+- Workspace mapping added: `^@roomly/db-types$` → source.
+
 ## Bump log
 
 _(append rows here when bumping a dep; include version old → new, date, reason, PR link)_
