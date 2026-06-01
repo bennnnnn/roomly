@@ -39,14 +39,17 @@ open http://localhost:54323
 
 The local `EXPO_PUBLIC_SUPABASE_URL` is `http://127.0.0.1:54321`; `EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY` is printed by `supabase status` (use the new `sb_publishable_…` key, not the legacy `anon` JWT — see [API Keys](https://supabase.com/docs/guides/getting-started/api-keys)).
 
-## Production (still TODO — see OPEN_QUESTIONS)
+## Production
 
-A real Supabase project does not yet exist (**OQ-017**). When it does:
+Project `roomly`, ref `olzluwalevtnyliwfhai`, region `us-east-1`. Linked locally via:
 
-1. `supabase link --project-ref <ref>`
-2. `supabase db push` to apply migrations
-3. `supabase gen types typescript --linked > packages/db-types/src/generated/database.ts`
-4. Rotate the anon key into EAS secrets + GitHub Actions secrets per ADR-0009.
+```bash
+supabase link --project-ref olzluwalevtnyliwfhai
+supabase db push          # apply pending migrations
+pnpm db:types             # regenerate packages/db-types/src/generated/database.ts
+```
+
+The linked project ref is stored in `supabase/.temp/project-ref` (gitignored).
 
 ## Authoring a new migration
 

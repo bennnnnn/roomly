@@ -1,96 +1,33 @@
 /**
- * Placeholder for generated Supabase types.
+ * Supabase-generated Postgres types for Roomly.
  *
- * Run `pnpm db:types` (added in Slice 1D) to regenerate
- * `src/generated/database.ts` from the live Supabase schema, then re-export
- * the needed types from this file.
+ * Regenerate after every migration that changes the schema:
+ *   pnpm db:types
  *
- * For now this exports an empty `Database` shape so `@supabase/supabase-js`
- * can be typed against it without weakening to `any`. When real tables land,
- * the generator overwrites this with the actual schema and consumers get
- * proper autocomplete on `from('...')` chains for free.
+ * Requires `supabase link --project-ref <ref>` (one-time per machine).
+ * Output lands in `src/generated/database.ts` (committed — it's not a secret).
  */
 
-/**
- * Hand-written stub matching `supabase/migrations/20260531000001_profiles.sql`.
- *
- * Slice 1D-X (TBD) will replace this with the output of:
- *   `supabase gen types typescript --linked > src/generated/database.ts`
- * tracked by OQ-017.
- *
- * Keep this file in sync with the migrations until then — `pnpm typecheck`
- * is the contract.
- */
+export type {
+  Database,
+  Json,
+  Tables,
+  TablesInsert,
+  TablesUpdate,
+  Enums,
+  CompositeTypes,
+} from './generated/database';
 
-export type AccountType = 'individual' | 'company';
+export { Constants } from './generated/database';
 
-export interface ProfileRow {
-  id: string;
-  display_name: string;
-  avatar_url: string | null;
-  account_type: AccountType;
-  company_name: string | null;
-  company_logo_url: string | null;
-  is_verified: boolean;
-  created_at: string;
-  updated_at: string;
-}
+/** Convenience aliases for the most-used table rows. */
+export type { Database as RoomlyDatabase } from './generated/database';
 
-export interface ProfileInsert {
-  id: string;
-  display_name: string;
-  avatar_url?: string | null;
-  account_type?: AccountType;
-  company_name?: string | null;
-  company_logo_url?: string | null;
-  is_verified?: boolean;
-}
+import type { Database } from './generated/database';
 
-export interface ProfileUpdate {
-  display_name?: string;
-  avatar_url?: string | null;
-  account_type?: AccountType;
-  company_name?: string | null;
-  company_logo_url?: string | null;
-}
-
-export interface BlockRow {
-  blocker_id: string;
-  blocked_id: string;
-  created_at: string;
-}
-
-export interface BlockInsert {
-  blocker_id: string;
-  blocked_id: string;
-}
-
-export interface Database {
-  public: {
-    Tables: {
-      profiles: {
-        Row: ProfileRow;
-        Insert: ProfileInsert;
-        Update: ProfileUpdate;
-        Relationships: [];
-      };
-      blocks: {
-        Row: BlockRow;
-        Insert: BlockInsert;
-        Update: Partial<BlockInsert>;
-        Relationships: [];
-      };
-    };
-    Views: Record<string, never>;
-    Functions: {
-      is_blocked_between: {
-        Args: { a: string; b: string };
-        Returns: boolean;
-      };
-    };
-    Enums: { account_type: AccountType };
-    CompositeTypes: Record<string, never>;
-  };
-}
-
-export type Placeholder = Record<string, never>;
+export type ProfileRow = Database['public']['Tables']['profiles']['Row'];
+export type ProfileInsert = Database['public']['Tables']['profiles']['Insert'];
+export type ProfileUpdate = Database['public']['Tables']['profiles']['Update'];
+export type BlockRow = Database['public']['Tables']['blocks']['Row'];
+export type BlockInsert = Database['public']['Tables']['blocks']['Insert'];
+export type AccountType = Database['public']['Enums']['account_type'];
