@@ -57,6 +57,180 @@ export type Database = {
         }
         Relationships: []
       }
+      favorites: {
+        Row: {
+          created_at: string
+          listing_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          listing_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          listing_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "favorites_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      listing_photos: {
+        Row: {
+          created_at: string
+          id: string
+          is_cover: boolean
+          listing_id: string
+          sort_order: number
+          storage_path: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_cover?: boolean
+          listing_id: string
+          sort_order?: number
+          storage_path: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_cover?: boolean
+          listing_id?: string
+          sort_order?: number
+          storage_path?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "listing_photos_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      listing_private_location: {
+        Row: {
+          address_line: string
+          created_at: string
+          listing_id: string
+          updated_at: string
+        }
+        Insert: {
+          address_line: string
+          created_at?: string
+          listing_id: string
+          updated_at?: string
+        }
+        Update: {
+          address_line?: string
+          created_at?: string
+          listing_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "listing_private_location_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: true
+            referencedRelation: "listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      listings: {
+        Row: {
+          area_label: string
+          available_from: string
+          created_at: string
+          deposit_cents: number | null
+          description: string
+          expires_at: string | null
+          furnished: boolean
+          has_laundry: boolean
+          has_own_bath: boolean
+          has_parking: boolean
+          has_shared_bath: boolean
+          id: string
+          lat: number
+          lng: number
+          min_months: number
+          no_smoking: boolean
+          owner_id: string
+          pets_allowed: boolean
+          price_cents: number
+          status: Database["public"]["Enums"]["listing_status"]
+          title: string
+          type: Database["public"]["Enums"]["listing_type"]
+          updated_at: string
+          utilities_included: boolean
+          view_count: number
+        }
+        Insert: {
+          area_label: string
+          available_from: string
+          created_at?: string
+          deposit_cents?: number | null
+          description: string
+          expires_at?: string | null
+          furnished?: boolean
+          has_laundry?: boolean
+          has_own_bath?: boolean
+          has_parking?: boolean
+          has_shared_bath?: boolean
+          id?: string
+          lat: number
+          lng: number
+          min_months?: number
+          no_smoking?: boolean
+          owner_id: string
+          pets_allowed?: boolean
+          price_cents: number
+          status?: Database["public"]["Enums"]["listing_status"]
+          title: string
+          type: Database["public"]["Enums"]["listing_type"]
+          updated_at?: string
+          utilities_included?: boolean
+          view_count?: number
+        }
+        Update: {
+          area_label?: string
+          available_from?: string
+          created_at?: string
+          deposit_cents?: number | null
+          description?: string
+          expires_at?: string | null
+          furnished?: boolean
+          has_laundry?: boolean
+          has_own_bath?: boolean
+          has_parking?: boolean
+          has_shared_bath?: boolean
+          id?: string
+          lat?: number
+          lng?: number
+          min_months?: number
+          no_smoking?: boolean
+          owner_id?: string
+          pets_allowed?: boolean
+          price_cents?: number
+          status?: Database["public"]["Enums"]["listing_status"]
+          title?: string
+          type?: Database["public"]["Enums"]["listing_type"]
+          updated_at?: string
+          utilities_included?: boolean
+          view_count?: number
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           account_type: Database["public"]["Enums"]["account_type"]
@@ -102,6 +276,13 @@ export type Database = {
     }
     Enums: {
       account_type: "individual" | "company"
+      listing_status: "draft" | "active" | "expired" | "rented" | "paused"
+      listing_type:
+        | "single_bedroom"
+        | "shared_bedroom"
+        | "basement"
+        | "full_unit"
+        | "extra_house"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -683,6 +864,14 @@ export const Constants = {
   public: {
     Enums: {
       account_type: ["individual", "company"],
+      listing_status: ["draft", "active", "expired", "rented", "paused"],
+      listing_type: [
+        "single_bedroom",
+        "shared_bedroom",
+        "basement",
+        "full_unit",
+        "extra_house",
+      ],
     },
   },
   storage: {

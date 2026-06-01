@@ -167,6 +167,14 @@ Foundation deps for env, logger, Supabase client, and Zustand session store. See
 - `apps/mobile/jest.config.cjs` gained `setupFiles: ['<rootDir>/jest.setup-env.ts']` so env stubs and the AsyncStorage mock are registered before any test module loads.
 - Workspace mapping added: `^@roomly/db-types$` → source.
 
+## Verified at Slice 2 install (2026-06-01)
+
+| Package                  | Version    | Verified date | Source                                                        |
+| ------------------------ | ---------- | ------------- | ------------------------------------------------------------- |
+| `@tanstack/react-query`  | `5.100.14` | 2026-06-01    | https://github.com/TanStack/query/releases                    |
+| `expo-image-picker`      | `56.0.11`  | 2026-06-01    | https://www.npmjs.com/package/expo-image-picker (SDK 56 line) |
+| `expo-image-manipulator` | `56.0.16`  | 2026-06-01    | `npm view expo-image-manipulator@56 version`                  |
+
 ## Bump log
 
 _(append rows here when bumping a dep; include version old → new, date, reason, PR link)_
