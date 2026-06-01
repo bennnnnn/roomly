@@ -104,6 +104,28 @@ export default tseslint.config(
       eqeqeq: ['error', 'always', { null: 'ignore' }],
       'no-debugger': 'error',
       'no-throw-literal': 'error',
+
+      // === Env-var safety (ADR-0009) ===
+      // Raw `process.env.*` access is banned outside the per-app `env.ts`
+      // files. All env reads must go through `defineEnv` so the visibility
+      // check + boot-time validation runs. The allowlist below carves out
+      // the env modules themselves.
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: "MemberExpression[object.name='process'][property.name='env']",
+          message:
+            'Raw process.env access is banned (ADR-0009). Route every env read through @roomly/lib defineEnv and the per-app env.ts.',
+        },
+      ],
+    },
+  },
+
+  // === Allowlist: the per-app env.ts files MAY touch process.env directly ===
+  {
+    files: ['apps/*/src/lib/env.ts', 'packages/lib/src/env.ts', 'apps/*/jest.setup-env.ts'],
+    rules: {
+      'no-restricted-syntax': 'off',
     },
   },
 
@@ -115,6 +137,10 @@ export default tseslint.config(
       '@typescript-eslint/no-non-null-assertion': 'off',
       '@typescript-eslint/no-explicit-any': 'off',
       'no-console': 'off',
+      // Tests legitimately manipulate process.env to drive env-dependent
+      // code paths, and the jest.resetModules pattern needs require().
+      'no-restricted-syntax': 'off',
+      '@typescript-eslint/no-require-imports': 'off',
     },
   },
 
