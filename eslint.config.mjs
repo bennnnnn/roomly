@@ -124,7 +124,12 @@ export default tseslint.config(
 
   // === Allowlist: the per-app env.ts files MAY touch process.env directly ===
   {
-    files: ['apps/*/src/lib/env.ts', 'packages/lib/src/env.ts', 'apps/*/jest.setup-env.ts'],
+    files: [
+      'apps/*/src/lib/env.ts',
+      'apps/admin/lib/env.ts',
+      'packages/lib/src/env.ts',
+      'apps/*/jest.setup-env.ts',
+    ],
     rules: {
       'no-restricted-syntax': 'off',
     },

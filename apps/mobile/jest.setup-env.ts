@@ -12,6 +12,15 @@ process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY ??= 'pk_test_placeholder';
 // an official in-memory mock; register it globally so any module that imports
 // AsyncStorage (e.g. supabaseClient) works in tests.
 // Docs: https://react-native-async-storage.github.io/async-storage/docs/advanced/jest
+jest.mock('expo-web-browser', () => ({
+  maybeCompleteAuthSession: jest.fn(),
+  openAuthSessionAsync: jest.fn(() => Promise.resolve({ type: 'cancel' })),
+}));
+
+jest.mock('expo-auth-session', () => ({
+  makeRedirectUri: jest.fn(() => 'roomly://auth/callback'),
+}));
+
 jest.mock('expo-secure-store', () => ({
   getItemAsync: jest.fn(() => Promise.resolve(null)),
   setItemAsync: jest.fn(() => Promise.resolve()),

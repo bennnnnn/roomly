@@ -431,6 +431,7 @@ export type Database = {
           display_name: string
           id: string
           is_verified: boolean
+          staff_role: Database["public"]["Enums"]["staff_role"]
           updated_at: string
         }
         Insert: {
@@ -442,6 +443,7 @@ export type Database = {
           display_name: string
           id: string
           is_verified?: boolean
+          staff_role?: Database["public"]["Enums"]["staff_role"]
           updated_at?: string
         }
         Update: {
@@ -453,6 +455,7 @@ export type Database = {
           display_name?: string
           id?: string
           is_verified?: boolean
+          staff_role?: Database["public"]["Enums"]["staff_role"]
           updated_at?: string
         }
         Relationships: []
@@ -513,6 +516,7 @@ export type Database = {
       }
       get_active_listing_count: { Args: { p_user_id: string }; Returns: number }
       is_blocked_between: { Args: { a: string; b: string }; Returns: boolean }
+      is_staff: { Args: { p_uid?: string }; Returns: boolean }
       publish_listing: {
         Args: { p_expires_at?: string; p_listing_id: string; p_user_id: string }
         Returns: undefined
@@ -530,6 +534,7 @@ export type Database = {
       payment_status: "succeeded" | "failed" | "refunded"
       payment_type: "listing_create" | "listing_multi" | "listing_renew"
       report_target_type: "listing" | "message" | "user"
+      staff_role: "user" | "moderator" | "admin"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1122,6 +1127,7 @@ export const Constants = {
       payment_status: ["succeeded", "failed", "refunded"],
       payment_type: ["listing_create", "listing_multi", "listing_renew"],
       report_target_type: ["listing", "message", "user"],
+      staff_role: ["user", "moderator", "admin"],
     },
   },
   storage: {

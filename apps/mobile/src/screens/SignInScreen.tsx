@@ -4,6 +4,7 @@ import { KeyboardAvoidingView, Platform, Text, View } from 'react-native';
 import { Button } from '../components/Button';
 import { Input } from '../components/Input';
 import { logger } from '../lib/logger';
+import { signInWithGoogle } from '../lib/oauthSignIn';
 import { supabase } from '../lib/supabaseClient';
 
 /**
@@ -29,6 +30,18 @@ export default function SignInScreen() {
   const [errorMessage, setErrorMessage] = useState<string | undefined>();
 
   const canSubmit = isLikelyEmail(email) && status !== 'sending';
+
+  async function handleGoogle(): Promise<void> {
+    setStatus('sending');
+    setErrorMessage(undefined);
+    const result = await signInWithGoogle();
+    if (result.error) {
+      setErrorMessage(result.error);
+      setStatus('error');
+      return;
+    }
+    setStatus('idle');
+  }
 
   async function handleSubmit(): Promise<void> {
     setStatus('sending');
@@ -89,6 +102,16 @@ export default function SignInScreen() {
               testID="sign-in-email"
               errorMessage={status === 'error' ? errorMessage : undefined}
               editable={status !== 'sending'}
+            />
+            <Button
+              label="Continue with Google"
+              variant="secondary"
+              onPress={() => {
+                void handleGoogle();
+              }}
+              loading={status === 'sending'}
+              disabled={status === 'sending'}
+              testID="sign-in-google"
             />
             <Button
               label={status === 'sending' ? 'Sending…' : 'Send magic link'}

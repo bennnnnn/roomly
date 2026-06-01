@@ -1,3 +1,5 @@
+import { signOut } from './login/actions';
+
 import type { Metadata } from 'next';
 
 import './globals.css';
@@ -25,6 +27,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <a href="/listings" className="text-sm text-neutral-600 hover:text-neutral-900">
               Listings
             </a>
+            <form action={signOut} className="ml-auto">
+              <button type="submit" className="text-sm text-neutral-600 hover:text-neutral-900">
+                Sign out
+              </button>
+            </form>
           </div>
         </nav>
         <main className="mx-auto max-w-6xl p-6">{children}</main>

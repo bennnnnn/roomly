@@ -31,6 +31,7 @@ export type ProfileUpdate = Database['public']['Tables']['profiles']['Update'];
 export type BlockRow = Database['public']['Tables']['blocks']['Row'];
 export type BlockInsert = Database['public']['Tables']['blocks']['Insert'];
 export type AccountType = Database['public']['Enums']['account_type'];
+export type StaffRole = Database['public']['Enums']['staff_role'];
 export type ListingType = Database['public']['Enums']['listing_type'];
 export type ListingStatus = Database['public']['Enums']['listing_status'];
 export type ListingRow = Database['public']['Tables']['listings']['Row'];

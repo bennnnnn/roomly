@@ -4,6 +4,7 @@ import { useCallback, useState } from 'react';
 import { ActivityIndicator, FlatList, Pressable, Text, View } from 'react-native';
 
 import { Button } from '../../../components/Button';
+import { useSessionStatus } from '../../../state/session';
 import { toggleFavorite } from '../api/favorites';
 import { useBrowseListings } from '../hooks/useBrowseListings';
 import { useBrowseFilterStore } from '../stores/browseFilterStore';
@@ -19,6 +20,7 @@ type ViewMode = 'list' | 'map';
 
 export function BrowseFeed() {
   const router = useRouter();
+  const sessionStatus = useSessionStatus();
   const query = useBrowseListings();
   const queryClient = useQueryClient();
   const location = useBrowseFilterStore((s) => s.location);
@@ -58,9 +60,13 @@ export function BrowseFeed() {
 
   const handleFavoriteToggle = useCallback(
     (item: BrowseListingItem) => {
+      if (sessionStatus !== 'authenticated') {
+        router.push('/sign-in');
+        return;
+      }
       favMutation.mutate({ id: item.id, isFav: item.isFavorite });
     },
-    [favMutation],
+    [favMutation, router, sessionStatus],
   );
 
   // Loading

@@ -52,3 +52,39 @@ jobs:
 
       - name: Audit production deps (high/critical blocks merge)
         run: pnpm audit --prod --audit-level=high
+
+  supabase-db:
+    name: Supabase pgTAP
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Start local database
+        run: supabase db start
+
+      - name: Reset and apply migrations
+        run: supabase db reset
+
+      - name: Run pgTAP tests
+        run: supabase test db
+
+  edge-functions:
+    name: Edge Function tests (Deno)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.1.4
+
+      - name: Deno test
+        run: pnpm test:fn

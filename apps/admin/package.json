@@ -10,6 +10,7 @@
     "test": "echo 'no tests yet — Slice 7 adds them' && exit 0"
   },
   "dependencies": {
+    "@roomly/db-types": "workspace:*",
     "@roomly/lib": "workspace:*",
     "@roomly/ui-tokens": "workspace:*",
     "@supabase/ssr": "^0.10.3",

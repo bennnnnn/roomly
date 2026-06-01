@@ -1,14 +1,13 @@
 import { Redirect } from 'expo-router';
 import { ActivityIndicator, View } from 'react-native';
 
-import WelcomeScreen from '../src/screens/WelcomeScreen';
 import { useSessionStatus } from '../src/state/session';
 
 /**
  * Root route — gates everything by session status.
  *
  * - loading: brief splash (no flash of Welcome before redirect).
- * - anonymous: Welcome screen.
+ * - anonymous: browse-first (PRD §3.1); sign-in from Browse header.
  * - authenticated: redirect into the (app) group (lands in Slice 1F).
  *
  * Keeping this as a single switch avoids the "auth check in every screen"
@@ -32,5 +31,5 @@ export default function Index() {
     return <Redirect href="/browse" />;
   }
 
-  return <WelcomeScreen />;
+  return <Redirect href="/(tabs)/browse" />;
 }

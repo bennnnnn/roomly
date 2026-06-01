@@ -45,3 +45,7 @@ Enums: `payment_type`, `payment_status`.
 | `reports`       | User-submitted moderation reports               |
 
 Message insert trigger masks contact info server-side and sets `flagged`.
+
+## Admin staff roles (2026-06-01)
+
+`profiles.staff_role`: `user` | `moderator` | `admin`. Self-elevation blocked by RLS; promote via service role only. `is_staff()` helper gates admin web.
