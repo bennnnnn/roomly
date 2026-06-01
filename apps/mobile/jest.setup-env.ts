@@ -27,6 +27,18 @@ jest.mock('expo-secure-store', () => ({
   deleteItemAsync: jest.fn(() => Promise.resolve()),
 }));
 
+jest.mock('expo-notifications', () => ({
+  setNotificationHandler: jest.fn(),
+  getPermissionsAsync: jest.fn(() => Promise.resolve({ status: 'denied' })),
+  requestPermissionsAsync: jest.fn(() => Promise.resolve({ status: 'denied' })),
+  getExpoPushTokenAsync: jest.fn(() => Promise.resolve({ data: 'ExponentPushToken[test]' })),
+}));
+
+jest.mock('expo-apple-authentication', () => ({
+  signInAsync: jest.fn(),
+  AppleAuthenticationScope: { FULL_NAME: 0, EMAIL: 1 },
+}));
+
 jest.mock('@react-native-async-storage/async-storage', () => {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const mock: unknown = require('@react-native-async-storage/async-storage/jest/async-storage-mock');

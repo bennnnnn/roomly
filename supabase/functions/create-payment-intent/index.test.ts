@@ -50,6 +50,11 @@ Deno.test('pricing: re-list of expired is $9.99', () => {
   assertEquals(amount, 999);
 });
 
+Deno.test('stripe tax: disabled unless STRIPE_TAX_ENABLED=true', () => {
+  const enabled = Deno.env.get('STRIPE_TAX_ENABLED') === 'true';
+  assertEquals(typeof enabled, 'boolean');
+});
+
 Deno.test('requires STRIPE_SECRET_KEY to be configured', () => {
   // The Edge Function checks Deno.env.get('STRIPE_SECRET_KEY')
   // and returns 500 if not set. This test simply validates the

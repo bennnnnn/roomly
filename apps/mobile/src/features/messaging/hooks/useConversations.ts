@@ -11,7 +11,6 @@ export function useConversations() {
     queryKey: ['conversations'],
     queryFn: fetchConversations,
     staleTime: 10_000,
-    refetchInterval: 20_000,
   });
 
   // Scoped Realtime: refresh when this user's participant row changes (e.g. re-join).

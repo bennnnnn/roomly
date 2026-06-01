@@ -6,12 +6,14 @@ import * as Linking from 'expo-linking';
 import { Stack } from 'expo-router';
 import { useEffect } from 'react';
 
+import { usePushRegistration } from '../src/features/push/usePushRegistration';
 import { createSessionFromUrl } from '../src/lib/authDeepLink';
 import { QueryProvider } from '../src/providers/QueryProvider';
 import { AppStripeProvider } from '../src/providers/StripeProvider';
 import { bootstrapSession } from '../src/state/session';
 
 export default function RootLayout() {
+  usePushRegistration();
   // Start the single Supabase auth listener at app boot. bootstrapSession is
   // idempotent (retro §1) so even with React 19's Strict-Mode double-invoke
   // we end up with exactly one subscription.

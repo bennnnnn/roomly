@@ -3,6 +3,7 @@ import { KeyboardAvoidingView, Platform, Text, View } from 'react-native';
 
 import { Button } from '../components/Button';
 import { Input } from '../components/Input';
+import { signInWithApple } from '../lib/appleSignIn';
 import { logger } from '../lib/logger';
 import { signInWithGoogle } from '../lib/oauthSignIn';
 import { supabase } from '../lib/supabaseClient';
@@ -30,6 +31,18 @@ export default function SignInScreen() {
   const [errorMessage, setErrorMessage] = useState<string | undefined>();
 
   const canSubmit = isLikelyEmail(email) && status !== 'sending';
+
+  async function handleApple(): Promise<void> {
+    setStatus('sending');
+    setErrorMessage(undefined);
+    const result = await signInWithApple();
+    if (result.error) {
+      setErrorMessage(result.error);
+      setStatus('error');
+      return;
+    }
+    setStatus('idle');
+  }
 
   async function handleGoogle(): Promise<void> {
     setStatus('sending');
@@ -103,6 +116,16 @@ export default function SignInScreen() {
               errorMessage={status === 'error' ? errorMessage : undefined}
               editable={status !== 'sending'}
             />
+            {Platform.OS === 'ios' ? (
+              <Button
+                label="Continue with Apple"
+                variant="secondary"
+                onPress={() => void handleApple()}
+                loading={status === 'sending'}
+                disabled={status === 'sending'}
+                testID="sign-in-apple"
+              />
+            ) : null}
             <Button
               label="Continue with Google"
               variant="secondary"

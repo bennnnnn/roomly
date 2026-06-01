@@ -1,11 +1,25 @@
-import { useLocalSearchParams } from 'expo-router';
+import { useQueryClient } from '@tanstack/react-query';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useRef, useState } from 'react';
-import { FlatList, Text, TextInput, View, KeyboardAvoidingView, Platform } from 'react-native';
+import {
+  FlatList,
+  Pressable,
+  Text,
+  TextInput,
+  View,
+  KeyboardAvoidingView,
+  Platform,
+} from 'react-native';
 
 import { maskContactInfo } from '@roomly/lib';
 
-import { sendMessage } from '../../src/features/messaging/api/messaging';
+import { hideConversation } from '../../src/features/messaging/api/conversationHide';
+import {
+  fetchConversationPeerUserId,
+  sendMessage,
+} from '../../src/features/messaging/api/messaging';
 import { useMessages } from '../../src/features/messaging/hooks/useMessages';
+import { ReportBlockSheet } from '../../src/features/safety/components/ReportBlockSheet';
 
 import type { MessageItem } from '../../src/features/messaging/types';
 
@@ -28,11 +42,31 @@ function MessageBubble({ message }: { message: MessageItem }) {
 }
 
 export default function ConversationScreen() {
+  const router = useRouter();
+  const queryClient = useQueryClient();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { data: messages, isLoading, addOptimistic } = useMessages(id);
   const [text, setText] = useState('');
   const [sending, setSending] = useState(false);
+  const [reportOpen, setReportOpen] = useState(false);
+  const [peerUserId, setPeerUserId] = useState<string | undefined>();
   const listRef = useRef<FlatList<MessageItem>>(null);
+
+  const openReport = useCallback(() => {
+    if (!id) return;
+    void fetchConversationPeerUserId(id).then((peerId) => {
+      setPeerUserId(peerId ?? undefined);
+      setReportOpen(true);
+    });
+  }, [id]);
+
+  const handleHide = useCallback(() => {
+    if (!id) return;
+    void hideConversation(id).then(() => {
+      void queryClient.invalidateQueries({ queryKey: ['conversations'] });
+      router.back();
+    });
+  }, [id, queryClient, router]);
 
   const handleSend = useCallback(async () => {
     const trimmed = text.trim();
@@ -77,6 +111,14 @@ export default function ConversationScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       keyboardVerticalOffset={90}
     >
+      <View className="flex-row justify-end gap-md border-b border-neutral-100 px-md py-sm dark:border-neutral-800">
+        <Pressable onPress={handleHide} testID="conversation-hide">
+          <Text className="text-caption text-neutral-500">Hide chat</Text>
+        </Pressable>
+        <Pressable onPress={openReport} testID="conversation-report">
+          <Text className="text-caption text-neutral-500">Report</Text>
+        </Pressable>
+      </View>
       <FlatList
         ref={listRef}
         data={messages ?? []}
@@ -103,6 +145,19 @@ export default function ConversationScreen() {
           editable={!sending}
         />
       </View>
+      {peerUserId ? (
+        <ReportBlockSheet
+          visible={reportOpen}
+          targetType="user"
+          targetId={peerUserId}
+          blockUserId={peerUserId}
+          onClose={() => setReportOpen(false)}
+          onComplete={() => {
+            void queryClient.invalidateQueries({ queryKey: ['conversations'] });
+            router.back();
+          }}
+        />
+      ) : null}
     </KeyboardAvoidingView>
   );
 }

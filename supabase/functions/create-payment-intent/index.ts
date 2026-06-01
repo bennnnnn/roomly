@@ -1,6 +1,7 @@
 import { z } from 'https://deno.land/x/zod@v3.22.4/mod.ts';
 import Stripe from 'https://esm.sh/stripe@14.25.0?target=deno';
 
+import { createListingPaymentIntent } from '../_shared/stripe-tax.ts';
 import { createUserClient, createServiceClient } from '../_shared/supabase.ts';
 import { logger } from '../_shared/logger.ts';
 import { httpError, httpOk } from '../_shared/http.ts';
@@ -102,7 +103,7 @@ Deno.serve(async (req: Request) => {
   });
 
   try {
-    const paymentIntent = await stripe.paymentIntents.create({
+    const paymentIntent = await createListingPaymentIntent(stripe, {
       amount,
       currency: 'usd',
       metadata: {
@@ -111,6 +112,7 @@ Deno.serve(async (req: Request) => {
         payment_type: paymentType,
       },
       description: `Roomly listing: ${listing.title}`,
+      listingReference: listingId,
     });
 
     logger.info('PaymentIntent created', {

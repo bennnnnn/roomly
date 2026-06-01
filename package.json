@@ -21,7 +21,7 @@
     "audit": "pnpm audit --prod --audit-level=high",
     "gate": "pnpm typecheck && pnpm lint && pnpm format:check && pnpm test && pnpm run audit",
     "test:db": "supabase test db",
-    "test:fn": "deno test --allow-env --allow-read supabase/functions/create-payment-intent/index.test.ts supabase/functions/stripe-webhook/index.test.ts",
+    "test:fn": "deno test --allow-env --allow-read supabase/functions/create-payment-intent/index.test.ts supabase/functions/stripe-webhook/index.test.ts supabase/functions/register-push-token/index.test.ts supabase/functions/expire-listings/index.test.ts",
     "db:types": "supabase gen types typescript --linked 2>/dev/null > packages/db-types/src/generated/database.ts",
     "prepare": "husky"
   },

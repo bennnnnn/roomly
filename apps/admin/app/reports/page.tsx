@@ -1,6 +1,8 @@
 import { createServiceClient } from '../../lib/supabase/service';
 import { FlaggedMessagesPanel } from '../FlaggedMessages';
 
+import { ReportRowActions } from './ReportRowActions';
+
 interface ReportRow {
   id: string;
   target_type: string;
@@ -8,6 +10,7 @@ interface ReportRow {
   reason: string;
   created_at: string;
   reporter_id: string;
+  status: string;
 }
 
 export default async function ReportsPage() {
@@ -15,7 +18,7 @@ export default async function ReportsPage() {
 
   const { data, error } = await svc
     .from('reports')
-    .select('id, target_type, target_id, reason, created_at, reporter_id')
+    .select('id, target_type, target_id, reason, created_at, reporter_id, status')
     .order('created_at', { ascending: false })
     .limit(100);
 
@@ -45,6 +48,7 @@ export default async function ReportsPage() {
                 <th className="px-4 py-2">Target</th>
                 <th className="px-4 py-2">Reporter</th>
                 <th className="px-4 py-2">Reason</th>
+                <th className="px-4 py-2">Status</th>
               </tr>
             </thead>
             <tbody>
@@ -57,6 +61,9 @@ export default async function ReportsPage() {
                   <td className="px-4 py-2 font-mono text-xs">{row.target_id}</td>
                   <td className="px-4 py-2 font-mono text-xs">{row.reporter_id}</td>
                   <td className="px-4 py-2 max-w-md">{row.reason}</td>
+                  <td className="px-4 py-2">
+                    <ReportRowActions reportId={row.id} status={row.status} />
+                  </td>
                 </tr>
               ))}
             </tbody>

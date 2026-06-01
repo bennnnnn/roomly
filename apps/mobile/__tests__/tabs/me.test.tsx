@@ -7,6 +7,11 @@ jest.mock('../../src/lib/supabaseClient', () => ({
         data: { subscription: { unsubscribe: jest.fn() } },
       })),
     },
+    from: jest.fn(() => ({
+      select: jest.fn(() =>
+        Promise.resolve({ count: 0, error: null, data: null, status: 200, statusText: 'OK' }),
+      ),
+    })),
   },
 }));
 
@@ -14,9 +19,18 @@ import { act, fireEvent, render, screen } from '@testing-library/react-native';
 
 import Me from '../../app/(tabs)/me';
 import { supabase } from '../../src/lib/supabaseClient';
+import { QueryProvider } from '../../src/providers/QueryProvider';
 import { __resetForTests, useSessionStore } from '../../src/state/session';
 
 const signOut = (supabase.auth as unknown as { signOut: jest.Mock }).signOut;
+
+function renderMe() {
+  return render(
+    <QueryProvider>
+      <Me />
+    </QueryProvider>,
+  );
+}
 
 describe('Me tab', () => {
   beforeEach(() => {
@@ -26,7 +40,7 @@ describe('Me tab', () => {
   });
 
   it('renders the heading and a sign-out button', () => {
-    render(<Me />);
+    renderMe();
     expect(screen.getByText('Me')).toBeOnTheScreen();
     expect(screen.getByTestId('me-sign-out')).toBeOnTheScreen();
   });
@@ -37,17 +51,17 @@ describe('Me tab', () => {
       session: null,
       user: { id: 'u1', email: 'me@example.com' } as never,
     });
-    render(<Me />);
+    renderMe();
     expect(screen.getByTestId('me-email')).toHaveTextContent('me@example.com');
   });
 
   it('falls back to "unknown" when no user is on the store', () => {
-    render(<Me />);
+    renderMe();
     expect(screen.getByTestId('me-email')).toHaveTextContent('unknown');
   });
 
   it('calls supabase.auth.signOut on press', async () => {
-    render(<Me />);
+    renderMe();
     await act(async () => {
       fireEvent.press(screen.getByTestId('me-sign-out'));
       await Promise.resolve();

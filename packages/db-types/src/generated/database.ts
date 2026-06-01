@@ -39,6 +39,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      audit_log: {
+        Row: {
+          action: string
+          actor_id: string | null
+          created_at: string
+          id: string
+          metadata: Json
+          target_id: string | null
+          target_type: string
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          created_at?: string
+          id?: string
+          metadata?: Json
+          target_id?: string | null
+          target_type: string
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          created_at?: string
+          id?: string
+          metadata?: Json
+          target_id?: string | null
+          target_type?: string
+        }
+        Relationships: []
+      }
       blocks: {
         Row: {
           blocked_id: string
@@ -350,6 +380,33 @@ export type Database = {
           },
         ]
       }
+      notification_preferences: {
+        Row: {
+          listing_expiring_push: boolean
+          marketing_opt_in: boolean
+          new_message_push: boolean
+          payment_receipt_email: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          listing_expiring_push?: boolean
+          marketing_opt_in?: boolean
+          new_message_push?: boolean
+          payment_receipt_email?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          listing_expiring_push?: boolean
+          marketing_opt_in?: boolean
+          new_message_push?: boolean
+          payment_receipt_email?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       payments: {
         Row: {
           amount_cents: number
@@ -460,12 +517,37 @@ export type Database = {
         }
         Relationships: []
       }
+      push_tokens: {
+        Row: {
+          expo_push_token: string
+          id: string
+          platform: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          expo_push_token: string
+          id?: string
+          platform: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          expo_push_token?: string
+          id?: string
+          platform?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       reports: {
         Row: {
           created_at: string
           id: string
           reason: string
           reporter_id: string
+          status: Database["public"]["Enums"]["report_status"]
           target_id: string
           target_type: Database["public"]["Enums"]["report_target_type"]
         }
@@ -474,6 +556,7 @@ export type Database = {
           id?: string
           reason: string
           reporter_id: string
+          status?: Database["public"]["Enums"]["report_status"]
           target_id: string
           target_type: Database["public"]["Enums"]["report_target_type"]
         }
@@ -482,6 +565,7 @@ export type Database = {
           id?: string
           reason?: string
           reporter_id?: string
+          status?: Database["public"]["Enums"]["report_status"]
           target_id?: string
           target_type?: Database["public"]["Enums"]["report_target_type"]
         }
@@ -514,6 +598,7 @@ export type Database = {
         Args: { p_listing_id: string; p_other_user_id: string }
         Returns: string
       }
+      expire_due_listings: { Args: never; Returns: number }
       get_active_listing_count: { Args: { p_user_id: string }; Returns: number }
       is_blocked_between: { Args: { a: string; b: string }; Returns: boolean }
       is_staff: { Args: { p_uid?: string }; Returns: boolean }
@@ -521,6 +606,7 @@ export type Database = {
         Args: { p_expires_at?: string; p_listing_id: string; p_user_id: string }
         Returns: undefined
       }
+      unpublish_listing: { Args: { p_listing_id: string }; Returns: undefined }
     }
     Enums: {
       account_type: "individual" | "company"
@@ -533,6 +619,7 @@ export type Database = {
         | "extra_house"
       payment_status: "succeeded" | "failed" | "refunded"
       payment_type: "listing_create" | "listing_multi" | "listing_renew"
+      report_status: "open" | "actioned" | "dismissed"
       report_target_type: "listing" | "message" | "user"
       staff_role: "user" | "moderator" | "admin"
     }
@@ -1126,6 +1213,7 @@ export const Constants = {
       ],
       payment_status: ["succeeded", "failed", "refunded"],
       payment_type: ["listing_create", "listing_multi", "listing_renew"],
+      report_status: ["open", "actioned", "dismissed"],
       report_target_type: ["listing", "message", "user"],
       staff_role: ["user", "moderator", "admin"],
     },

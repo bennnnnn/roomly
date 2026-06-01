@@ -3,6 +3,7 @@ import { Pressable, ScrollView, Text, View } from 'react-native';
 
 import { Button } from '../../src/components/Button';
 import { Card } from '../../src/components/Card';
+import { useOwnedListingCount } from '../../src/features/listings/hooks/useOwnedListingCount';
 import { logger } from '../../src/lib/logger';
 import { supabase } from '../../src/lib/supabaseClient';
 import { useUser } from '../../src/state/session';
@@ -11,11 +12,13 @@ import { useUser } from '../../src/state/session';
  * "Me" tab — adaptive profile hub (Slice 6).
  *
  * Renter menu (0 listings): Saved, Messages, Settings, List-your-place CTA.
- * Host menu (≥1 listing): adds My Listings, Billing, Account type.
+ * Host menu (≥1 listing): adds My Listings, Billing.
  */
 export default function Me() {
   const user = useUser();
   const router = useRouter();
+  const { data: listingCount = 0 } = useOwnedListingCount(Boolean(user));
+  const isHost = listingCount > 0;
 
   async function handleSignOut(): Promise<void> {
     const { error } = await supabase.auth.signOut();
@@ -32,10 +35,9 @@ export default function Me() {
     >
       <Text className="text-heading font-semibold text-neutral-900 dark:text-neutral-0">Me</Text>
 
-      {/* Profile card */}
       <Card>
         <View className="items-center gap-sm">
-          <View className="h-16 w-16 rounded-full bg-accent-100 dark:bg-accent-900/30 items-center justify-center">
+          <View className="h-16 w-16 items-center justify-center rounded-full bg-accent-100 dark:bg-accent-900/30">
             <Text className="text-heading text-accent-500">
               {user?.email?.charAt(0).toUpperCase() ?? '?'}
             </Text>
@@ -52,30 +54,33 @@ export default function Me() {
         </View>
       </Card>
 
-      {/* Menu items */}
       <Card>
         <MenuItem label="Saved listings" icon="❤️" onPress={() => router.push('/(tabs)/saved')} />
         <MenuDivider />
         <MenuItem label="Messages" icon="💬" onPress={() => router.push('/(tabs)/messages')} />
-        <MenuDivider />
-        <MenuItem label="My listings" icon="🏠" onPress={() => router.push('/my-listings')} />
-        <MenuDivider />
-        <MenuItem label="Billing" icon="💳" onPress={() => router.push('/billing')} />
+        {isHost ? (
+          <>
+            <MenuDivider />
+            <MenuItem label="My listings" icon="🏠" onPress={() => router.push('/my-listings')} />
+            <MenuDivider />
+            <MenuItem label="Billing" icon="💳" onPress={() => router.push('/billing')} />
+          </>
+        ) : null}
         <MenuDivider />
         <MenuItem label="Settings" icon="⚙️" onPress={() => router.push('/settings')} />
       </Card>
 
-      {/* List-your-place CTA */}
-      <Card>
-        <Text className="text-body text-neutral-700 dark:text-neutral-200">
-          Have a room to rent?
-        </Text>
-        <View className="mt-sm">
-          <Button label="List your place" onPress={() => router.push('/listing/new')} />
-        </View>
-      </Card>
+      {!isHost ? (
+        <Card testID="me-list-cta">
+          <Text className="text-body text-neutral-700 dark:text-neutral-200">
+            Have a room to rent?
+          </Text>
+          <View className="mt-sm">
+            <Button label="List your place" onPress={() => router.push('/listing/new')} />
+          </View>
+        </Card>
+      ) : null}
 
-      {/* Sign out */}
       <Button
         label="Sign out"
         variant="ghost"

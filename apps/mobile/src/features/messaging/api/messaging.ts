@@ -20,6 +20,21 @@ interface ConvRow {
   };
 }
 
+export async function fetchConversationPeerUserId(conversationId: string): Promise<string | null> {
+  const { data: userData } = await supabase.auth.getUser();
+  const myId = userData?.user?.id;
+  if (!myId) return null;
+
+  const { data, error } = await supabase
+    .from('conversation_participants')
+    .select('user_id')
+    .eq('conversation_id', conversationId);
+
+  if (error) throw error;
+  const peer = (data ?? []).find((row) => row.user_id !== myId);
+  return peer?.user_id ?? null;
+}
+
 export async function createConversation(listingId: string, hostUserId: string): Promise<string> {
   const { data, error } = await supabase.rpc('create_conversation', {
     p_listing_id: listingId,
@@ -119,6 +134,10 @@ export async function sendMessage(conversationId: string, body: string): Promise
     .from('conversations')
     .update({ last_message_at: new Date().toISOString() })
     .eq('id', conversationId);
+
+  void supabase.functions.invoke('notify-new-message', {
+    body: { conversationId },
+  });
 
   return {
     id: data.id,

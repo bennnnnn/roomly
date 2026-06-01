@@ -25,6 +25,8 @@ const config: ExpoConfig = {
     'expo-router',
     'expo-secure-store',
     'expo-web-browser',
+    'expo-notifications',
+    'expo-apple-authentication',
     [
       'expo-image-picker',
       {

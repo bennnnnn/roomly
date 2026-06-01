@@ -191,6 +191,13 @@ Foundation deps for env, logger, Supabase client, and Zustand session store. See
 | `expo-auth-session` | `56.0.13` | 2026-06-01    | https://www.npmjs.com/package/expo-auth-session          | OAuth redirect URI helper (Google sign-in).                                              |
 | `expo-web-browser`  | `56.0.5`  | 2026-06-01    | https://www.npmjs.com/package/expo-web-browser           | In-app browser for OAuth completion.                                                     |
 
+## Verified at Slice 5 push install (2026-06-01)
+
+| Package                     | Version   | Verified date | Source                                                           | Notes                           |
+| --------------------------- | --------- | ------------- | ---------------------------------------------------------------- | ------------------------------- |
+| `expo-notifications`        | `56.0.15` | 2026-06-01    | https://www.npmjs.com/package/expo-notifications/v/56.0.15       | Push registration (Slice 5).    |
+| `expo-apple-authentication` | `56.0.4`  | 2026-06-01    | https://www.npmjs.com/package/expo-apple-authentication/v/56.0.4 | Apple Sign-In on iOS (Slice 1). |
+
 ## Verified at Slice 7 install (2026-06-01)
 
 | Package         | Version  | Verified date | Source                                      | Notes                                   |

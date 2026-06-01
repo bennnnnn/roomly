@@ -152,6 +152,29 @@ Deno.serve(async (req: Request) => {
     return httpOk({ recorded: true });
   }
 
+  // --- Refund / dispute: unpublish listing ---
+  if (event.type === 'charge.refunded') {
+    const charge = event.data.object as Stripe.Charge;
+    const piId = typeof charge.payment_intent === 'string' ? charge.payment_intent : null;
+    if (piId) {
+      const { data: payment } = await svc
+        .from('payments')
+        .select('listing_id')
+        .eq('stripe_payment_intent_id', piId)
+        .maybeSingle();
+
+      if (payment?.listing_id) {
+        await svc.rpc('unpublish_listing', { p_listing_id: payment.listing_id });
+        await svc
+          .from('payments')
+          .update({ status: 'refunded' })
+          .eq('stripe_payment_intent_id', piId);
+        logger.info('charge.refunded unpublish', { listingId: payment.listing_id });
+      }
+    }
+    return httpOk({ refunded: true });
+  }
+
   // Unhandled event type
   return httpOk({ skipped: true, type: event.type });
 });

@@ -1,5 +1,7 @@
 import { createServiceClient } from '../lib/supabase/service';
 
+import { FlaggedMessageActions } from './FlaggedMessageActions';
+
 interface FlaggedRow {
   id: string;
   body: string;
@@ -32,6 +34,7 @@ export async function FlaggedMessagesPanel() {
             <p className="text-neutral-500">{new Date(row.created_at).toLocaleString()}</p>
             <p className="mt-1 text-neutral-900">{row.body}</p>
             <p className="mt-1 font-mono text-xs text-neutral-400">{row.conversation_id}</p>
+            <FlaggedMessageActions messageId={row.id} />
           </li>
         ))}
       </ul>

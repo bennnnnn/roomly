@@ -1,11 +1,12 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
-import { ActivityIndicator, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, Text, View } from 'react-native';
 
 import { Button } from '../../src/components/Button';
 import { ListingDetailBody } from '../../src/features/listings/components/ListingDetailBody';
 import { useListingDetail } from '../../src/features/listings/hooks/useListingDetail';
 import { createConversation } from '../../src/features/messaging/api/messaging';
+import { ReportBlockSheet } from '../../src/features/safety/components/ReportBlockSheet';
 import { logger } from '../../src/lib/logger';
 import { useUser } from '../../src/state/session';
 
@@ -16,6 +17,7 @@ export default function ListingDetailScreen() {
   const query = useListingDetail(id);
   const [messageBusy, setMessageBusy] = useState(false);
   const [messageError, setMessageError] = useState<string | undefined>();
+  const [reportOpen, setReportOpen] = useState(false);
 
   async function handleMessageHost(): Promise<void> {
     if (!user) {
@@ -64,10 +66,19 @@ export default function ListingDetailScreen() {
     );
   }
 
+  const listing = query.data;
+
   return (
     <View className="flex-1">
+      {!listing.isOwner ? (
+        <View className="absolute right-lg top-lg z-10">
+          <Pressable onPress={() => setReportOpen(true)} testID="listing-report">
+            <Text className="text-caption text-neutral-500">Report</Text>
+          </Pressable>
+        </View>
+      ) : null}
       <ListingDetailBody
-        listing={query.data}
+        listing={listing}
         testID="listing-detail"
         onEdit={() => router.push(`/listing/${id}/edit`)}
         onMessage={() => void handleMessageHost()}
@@ -76,6 +87,13 @@ export default function ListingDetailScreen() {
       {messageError ? (
         <Text className="px-lg pb-lg text-caption text-semantic-danger">{messageError}</Text>
       ) : null}
+      <ReportBlockSheet
+        visible={reportOpen}
+        targetType="listing"
+        targetId={listing.id}
+        blockUserId={listing.ownerId}
+        onClose={() => setReportOpen(false)}
+      />
     </View>
   );
 }

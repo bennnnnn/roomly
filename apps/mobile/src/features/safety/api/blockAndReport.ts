@@ -1,4 +1,5 @@
 import { supabase } from '../../../lib/supabaseClient';
+import { hideConversationsWithUser } from '../../messaging/api/conversationHide';
 
 import type { Database } from '@roomly/db-types';
 
@@ -14,6 +15,8 @@ export async function blockUser(blockedId: string): Promise<void> {
     blocked_id: blockedId,
   });
   if (error) throw error;
+
+  await hideConversationsWithUser(blockedId);
 }
 
 export async function submitReport(
