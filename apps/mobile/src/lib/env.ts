@@ -18,8 +18,8 @@ import { defineEnv } from '@roomly/lib';
 // `no-restricted-syntax` rule in `eslint.config.mjs` flags this anywhere
 // else; this file is on the allowlist.
 const getter = (key: string): string | undefined => {
-  const value: string | undefined = process.env[key];
-  return value;
+  const raw: unknown = process.env[key];
+  return typeof raw === 'string' ? raw : undefined;
 };
 
 export const env = defineEnv(
