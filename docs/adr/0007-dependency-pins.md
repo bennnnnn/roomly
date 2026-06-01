@@ -175,6 +175,25 @@ Foundation deps for env, logger, Supabase client, and Zustand session store. See
 | `expo-image-picker`      | `56.0.11`  | 2026-06-01    | https://www.npmjs.com/package/expo-image-picker (SDK 56 line) |
 | `expo-image-manipulator` | `56.0.16`  | 2026-06-01    | `npm view expo-image-manipulator@56 version`                  |
 
+## Verified at Slice 4 install (2026-06-01)
+
+| Package                       | Version  | Verified date | Source                                                             | Notes                                            |
+| ----------------------------- | -------- | ------------- | ------------------------------------------------------------------ | ------------------------------------------------ |
+| `@stripe/stripe-react-native` | `0.66.0` | 2026-06-01    | https://github.com/stripe/stripe-react-native/releases/tag/v0.66.0 | Latest stable; `expo install` aligns with SDK 56 |
+
+## Verified at Slice 3 / gap-fix install (2026-06-01)
+
+| Package             | Version  | Verified date | Source                                                 | Notes                                                                                    |
+| ------------------- | -------- | ------------- | ------------------------------------------------------ | ---------------------------------------------------------------------------------------- |
+| `react-native-maps` | `1.20.1` | 2026-06-01    | https://github.com/react-native-maps/react-native-maps | Map view toggle in browse feed (Slice 3 gap). Apple Maps on iOS, Google Maps on Android. |
+
+## Verified at Slice 7 install (2026-06-01)
+
+| Package         | Version  | Verified date | Source                                      | Notes                                   |
+| --------------- | -------- | ------------- | ------------------------------------------- | --------------------------------------- |
+| `next`          | `15.2.6` | 2026-06-01    | https://www.npmjs.com/package/next          | Next 16.x not available yet on npm      |
+| `@supabase/ssr` | `0.10.3` | 2026-06-01    | https://www.npmjs.com/package/@supabase/ssr | Admin service-role client (future wire) |
+
 ## Bump log
 
 _(append rows here when bumping a dep; include version old → new, date, reason, PR link)_
