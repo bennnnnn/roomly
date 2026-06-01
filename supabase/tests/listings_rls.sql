@@ -3,7 +3,7 @@
 
 begin;
 
-select plan(8);
+select plan(9);
 
 -- ============================================================================
 -- RLS enabled
@@ -69,10 +69,21 @@ select is_empty(
 
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000010';
 
+select throws_ok(
+  $$ update public.listings set status = 'active' where id = '00000000-0000-0000-0000-000000000020' $$,
+  '42501',
+  'owner cannot self-activate listing (publish is server-only in Slice 4)'
+);
+
+set local role = service_role;
+
 select lives_ok(
   $$ update public.listings set status = 'active' where id = '00000000-0000-0000-0000-000000000020' $$,
-  'owner can activate listing (payment gate is app-layer in Slice 4)'
+  'service role can activate listing for tests'
 );
+
+set local role = authenticated;
+set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000010';
 
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000011';
 

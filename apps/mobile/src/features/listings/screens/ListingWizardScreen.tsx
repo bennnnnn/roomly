@@ -1,6 +1,6 @@
 import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ScrollView, Switch, Text, View } from 'react-native';
 
 import { dollarsToCents, hasContactInfo, LISTING_TYPES, validateListingStep } from '@roomly/lib';
@@ -13,6 +13,7 @@ import {
   createListingDraft,
   fetchOwnerListingDraft,
   upsertListingDraft,
+  type ListingDraftUpdate,
 } from '../api/listingDraft';
 import { uploadListingPhoto } from '../api/uploadListingPhoto';
 import { LISTING_TYPE_LABELS, WIZARD_STEP_COUNT } from '../constants';
@@ -29,60 +30,73 @@ export default function ListingWizardScreen({ mode, listingId }: ListingWizardSc
   const store = useListingWizardStore();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | undefined>();
-
-  const init = useCallback(async () => {
-    if (!user?.id) return;
-    setBusy(true);
-    setError(undefined);
-    try {
-      if (mode === 'edit' && listingId) {
-        const loaded = await fetchOwnerListingDraft(listingId);
-        if (!loaded) {
-          setError('Listing not found.');
-          return;
-        }
-        const p = loaded.payload;
-        store.patch({
-          listingId,
-          type: p.type,
-          areaLabel: p.areaLabel,
-          addressLine: p.addressLine,
-          lat: String(p.lat),
-          lng: String(p.lng),
-          priceDollars: String(p.priceCents / 100),
-          depositDollars: p.depositCents != null ? String(p.depositCents / 100) : '',
-          availableFrom: p.availableFrom,
-          minMonths: String(p.minMonths),
-          hasOwnBath: p.hasOwnBath,
-          hasSharedBath: p.hasSharedBath,
-          noSmoking: p.noSmoking,
-          petsAllowed: p.petsAllowed,
-          furnished: p.furnished,
-          utilitiesIncluded: p.utilitiesIncluded,
-          hasParking: p.hasParking,
-          hasLaundry: p.hasLaundry,
-          title: p.title,
-          description: p.description,
-          photos: Array.from({ length: loaded.photoCount }, (_, i) => ({
-            id: `existing-${String(i)}`,
-          })),
-        });
-      } else {
-        const id = await createListingDraft(user.id);
-        store.reset();
-        store.setListingId(id);
-      }
-    } catch (e: unknown) {
-      logger.error('wizard init failed', { message: e instanceof Error ? e.message : 'unknown' });
-      setError('Could not start the listing wizard.');
-    } finally {
-      setBusy(false);
-    }
-  }, [listingId, mode, store, user?.id]);
+  const initKeyRef = useRef<string | null>(null);
 
   useEffect(() => {
-    void init();
-  }, [init]);
+    if (!user?.id) return;
+    const initKey = `${mode}:${listingId ?? 'new'}:${user.id}`;
+    if (initKeyRef.current === initKey) return;
+    initKeyRef.current = initKey;
+
+    let cancelled = false;
+    const { patch, reset, setListingId } = useListingWizardStore.getState();
+
+    void (async () => {
+      setBusy(true);
+      setError(undefined);
+      try {
+        if (mode === 'edit' && listingId) {
+          const loaded = await fetchOwnerListingDraft(listingId);
+          if (cancelled) return;
+          if (!loaded) {
+            setError('Listing not found.');
+            return;
+          }
+          const p = loaded.payload;
+          patch({
+            listingId,
+            type: p.type,
+            areaLabel: p.areaLabel,
+            addressLine: p.addressLine,
+            lat: String(p.lat),
+            lng: String(p.lng),
+            priceDollars: String(p.priceCents / 100),
+            depositDollars: p.depositCents != null ? String(p.depositCents / 100) : '',
+            availableFrom: p.availableFrom,
+            minMonths: String(p.minMonths),
+            hasOwnBath: p.hasOwnBath,
+            hasSharedBath: p.hasSharedBath,
+            noSmoking: p.noSmoking,
+            petsAllowed: p.petsAllowed,
+            furnished: p.furnished,
+            utilitiesIncluded: p.utilitiesIncluded,
+            hasParking: p.hasParking,
+            hasLaundry: p.hasLaundry,
+            title: p.title,
+            description: p.description,
+            photos: Array.from({ length: loaded.photoCount }, (_, i) => ({
+              id: `existing-${String(i)}`,
+            })),
+          });
+        } else {
+          const id = await createListingDraft(user.id);
+          if (cancelled) return;
+          reset();
+          setListingId(id);
+        }
+      } catch (e: unknown) {
+        if (cancelled) return;
+        logger.error('wizard init failed', { message: e instanceof Error ? e.message : 'unknown' });
+        setError('Could not start the listing wizard.');
+      } finally {
+        if (!cancelled) setBusy(false);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [listingId, mode, user?.id]);
 
   async function pickPhoto(): Promise<void> {
     if (!user?.id || !store.listingId) return;
@@ -121,28 +135,45 @@ export default function ListingWizardScreen({ mode, listingId }: ListingWizardSc
     }
   }
 
-  function buildPayload() {
-    return {
-      type: store.type ?? 'single_bedroom',
-      title: store.title.trim(),
-      description: store.description.trim(),
-      priceCents: dollarsToCents(Number(store.priceDollars)),
-      depositCents: store.depositDollars ? dollarsToCents(Number(store.depositDollars)) : null,
-      availableFrom: store.availableFrom,
-      minMonths: Number(store.minMonths),
-      areaLabel: store.areaLabel.trim(),
-      addressLine: store.addressLine.trim(),
-      lat: Number(store.lat),
-      lng: Number(store.lng),
-      hasOwnBath: store.hasOwnBath,
-      hasSharedBath: store.hasSharedBath,
-      noSmoking: store.noSmoking,
-      petsAllowed: store.petsAllowed,
-      furnished: store.furnished,
-      utilitiesIncluded: store.utilitiesIncluded,
-      hasParking: store.hasParking,
-      hasLaundry: store.hasLaundry,
-    };
+  function buildPayloadForStep(step: number): ListingDraftUpdate {
+    switch (step) {
+      case 1:
+        return { type: store.type ?? 'single_bedroom' };
+      case 2:
+        return {};
+      case 3:
+        return {
+          areaLabel: store.areaLabel.trim(),
+          addressLine: store.addressLine.trim(),
+          lat: Number(store.lat),
+          lng: Number(store.lng),
+        };
+      case 4:
+        return {
+          priceCents: dollarsToCents(Number(store.priceDollars)),
+          depositCents: store.depositDollars ? dollarsToCents(Number(store.depositDollars)) : null,
+          availableFrom: store.availableFrom,
+          minMonths: Number(store.minMonths),
+        };
+      case 5:
+        return {
+          hasOwnBath: store.hasOwnBath,
+          hasSharedBath: store.hasSharedBath,
+          noSmoking: store.noSmoking,
+          petsAllowed: store.petsAllowed,
+          furnished: store.furnished,
+          utilitiesIncluded: store.utilitiesIncluded,
+          hasParking: store.hasParking,
+          hasLaundry: store.hasLaundry,
+        };
+      case 6:
+        return {
+          title: store.title.trim(),
+          description: store.description.trim(),
+        };
+      default:
+        return {};
+    }
   }
 
   function fieldsForStep() {
@@ -167,7 +198,10 @@ export default function ListingWizardScreen({ mode, listingId }: ListingWizardSc
     setBusy(true);
     setError(undefined);
     try {
-      await upsertListingDraft(store.listingId, buildPayload());
+      const patch = buildPayloadForStep(store.step);
+      if (Object.keys(patch).length > 0) {
+        await upsertListingDraft(store.listingId, patch);
+      }
       return true;
     } catch (e: unknown) {
       logger.error('save draft failed', { message: e instanceof Error ? e.message : 'unknown' });

@@ -1,5 +1,6 @@
 import { supabase } from '../../../lib/supabaseClient';
 
+import type { ListingUpdate } from '@roomly/db-types';
 import type { ListingType } from '@roomly/lib';
 
 export interface ListingDraftPayload {
@@ -48,43 +49,45 @@ export async function createListingDraft(ownerId: string): Promise<string> {
   return data.id;
 }
 
+export type ListingDraftUpdate = Partial<ListingDraftPayload>;
+
 export async function upsertListingDraft(
   listingId: string,
-  payload: ListingDraftPayload,
+  payload: ListingDraftUpdate,
 ): Promise<void> {
-  const { error: listingError } = await supabase
-    .from('listings')
-    .update({
-      type: payload.type,
-      title: payload.title,
-      description: payload.description,
-      price_cents: payload.priceCents,
-      deposit_cents: payload.depositCents,
-      available_from: payload.availableFrom,
-      min_months: payload.minMonths,
-      area_label: payload.areaLabel,
-      lat: payload.lat,
-      lng: payload.lng,
-      has_own_bath: payload.hasOwnBath,
-      has_shared_bath: payload.hasSharedBath,
-      no_smoking: payload.noSmoking,
-      pets_allowed: payload.petsAllowed,
-      furnished: payload.furnished,
-      utilities_included: payload.utilitiesIncluded,
-      has_parking: payload.hasParking,
-      has_laundry: payload.hasLaundry,
-      status: 'draft',
-    })
-    .eq('id', listingId);
+  const row: ListingUpdate = {};
 
-  if (listingError) throw listingError;
+  if (payload.type !== undefined) row.type = payload.type;
+  if (payload.title !== undefined) row.title = payload.title;
+  if (payload.description !== undefined) row.description = payload.description;
+  if (payload.priceCents !== undefined) row.price_cents = payload.priceCents;
+  if (payload.depositCents !== undefined) row.deposit_cents = payload.depositCents;
+  if (payload.availableFrom !== undefined) row.available_from = payload.availableFrom;
+  if (payload.minMonths !== undefined) row.min_months = payload.minMonths;
+  if (payload.areaLabel !== undefined) row.area_label = payload.areaLabel;
+  if (payload.lat !== undefined) row.lat = payload.lat;
+  if (payload.lng !== undefined) row.lng = payload.lng;
+  if (payload.hasOwnBath !== undefined) row.has_own_bath = payload.hasOwnBath;
+  if (payload.hasSharedBath !== undefined) row.has_shared_bath = payload.hasSharedBath;
+  if (payload.noSmoking !== undefined) row.no_smoking = payload.noSmoking;
+  if (payload.petsAllowed !== undefined) row.pets_allowed = payload.petsAllowed;
+  if (payload.furnished !== undefined) row.furnished = payload.furnished;
+  if (payload.utilitiesIncluded !== undefined) row.utilities_included = payload.utilitiesIncluded;
+  if (payload.hasParking !== undefined) row.has_parking = payload.hasParking;
+  if (payload.hasLaundry !== undefined) row.has_laundry = payload.hasLaundry;
 
-  const { error: locError } = await supabase.from('listing_private_location').upsert({
-    listing_id: listingId,
-    address_line: payload.addressLine,
-  });
+  if (Object.keys(row).length > 0) {
+    const { error: listingError } = await supabase.from('listings').update(row).eq('id', listingId);
+    if (listingError) throw listingError;
+  }
 
-  if (locError) throw locError;
+  if (payload.addressLine !== undefined) {
+    const { error: locError } = await supabase.from('listing_private_location').upsert({
+      listing_id: listingId,
+      address_line: payload.addressLine,
+    });
+    if (locError) throw locError;
+  }
 }
 
 export async function fetchOwnerListingDraft(listingId: string): Promise<{

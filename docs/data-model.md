@@ -14,3 +14,5 @@ Source of truth: `supabase/migrations/`. Regenerate client types with `pnpm db:t
 Enums: `listing_type`, `listing_status`.
 
 Public browse reads `listings` where `status = 'active'` with block filter (ADR-0006).
+Owners cannot set `status = 'active'` via client RLS; publish is server-only (Slice 4).
+Anon may `SELECT` `storage.objects` in `listing-photos` for active listings (signed URLs).
