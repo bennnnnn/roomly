@@ -120,6 +120,38 @@ Tooling pins added when scaffolding the Expo mobile shell.
 | `jest`        | `30.4.2` | `29.7.0`  | `jest-expo@56` depends on `@jest/globals@^29.2.1`; mixing Jest 30 binary with 29 internals broke 5/5 tests. Re-evaluate when `jest-expo` ships a 30-compatible release. |
 | `@types/jest` | `30.0.0` | `29.5.14` | Matches the jest 29.7.0 runtime above.                                                                                                                                  |
 
+## Verified at Slice 1B install (2026-05-31)
+
+NativeWind 4.2 + the Reanimated 4 + worklets chain it now requires. Tailwind v3 is forced (NativeWind v5 is still preview as of 5.0.0-preview.4, published May 15 2026; upstream explicitly says "use v4.1 for production").
+
+| Package                   | Version  | Source                                     | Notes                                                                                                                                                   |
+| ------------------------- | -------- | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `nativewind`              | `4.2.4`  | `npm view nativewind version`              | v5 is `preview` tag only — `npm view nativewind dist-tags` confirms `latest: 4.2.4, preview: 5.0.0-preview.4`. Revisit when v5 hits `latest`.           |
+| `tailwindcss`             | `3.4.19` | `npm view tailwindcss@^3 version`          | Tailwind v3 required by NativeWind 4.x; v4.x is a hard incompat (different PostCSS-first pipeline used only by NativeWind v5).                          |
+| `react-native-reanimated` | `4.4.0`  | `npm view react-native-reanimated version` | NativeWind 4.2 ships a Reanimated-4-only worklet path (see [nativewind#1574](https://github.com/nativewind/nativewind/issues/1574)). Requires New Arch. |
+| `react-native-worklets`   | `0.9.1`  | `npm view react-native-worklets version`   | Reanimated 4 dropped its bundled babel plugin in favor of this package's plugin. `react-native-worklets/plugin` must be **last** in `babel.config.js`.  |
+
+### Config flow
+
+```
+packages/ui-tokens/src/index.ts       ← single source of truth (COLORS, SPACING, RADII, FONT_SIZES)
+                ↓
+packages/ui-tokens/src/tailwind.ts    ← tailwind-theme projection (pxifies SPACING/RADII/FONT_SIZES; colors pass through)
+                ↓
+apps/mobile/tailwind.config.ts        ← `theme: tailwindTheme` + `presets: [nativewindPreset]`
+                ↓
+apps/mobile/global.css                ← `@tailwind base/components/utilities` — processed by Metro via `withNativeWind(config, { input: './global.css' })`
+                ↓
+className="bg-accent-500 p-md"        ← consumed at runtime by nativewind/jsx-runtime (enabled via `babel-preset-expo`'s `jsxImportSource: 'nativewind'`)
+```
+
+The admin Tailwind config (Slice 7) will import the same `@roomly/ui-tokens/tailwind` so the two apps cannot drift apart on tokens.
+
+### Known quirks captured during install
+
+- `nativewind/preset` ships an **empty** `dist/tailwind/index.d.ts`, so TypeScript reports "is not a module" if you `import` it. Worked around with an ambient `declare module 'nativewind/preset'` in `apps/mobile/nativewind-env.d.ts`. Track upstream — remove the declaration when fixed.
+- `declare module '*.css'` is also needed in the same file so `import '../global.css'` typechecks. This is a TS hygiene fix, not a runtime concern.
+
 ## Bump log
 
 _(append rows here when bumping a dep; include version old → new, date, reason, PR link)_

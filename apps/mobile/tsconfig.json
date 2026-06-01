@@ -10,7 +10,7 @@
     "rootDir": ".",
     "outDir": "dist"
   },
-  "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts"],
+  "include": ["**/*.ts", "**/*.tsx", "nativewind-env.d.ts", ".expo/types/**/*.ts"],
   "exclude": [
     "node_modules",
     "dist",
