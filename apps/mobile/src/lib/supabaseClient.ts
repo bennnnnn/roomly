@@ -20,7 +20,7 @@ import type { Database } from '@roomly/db-types';
  */
 export const supabase: SupabaseClient<Database> = createClient<Database>(
   env.EXPO_PUBLIC_SUPABASE_URL,
-  env.EXPO_PUBLIC_SUPABASE_ANON_KEY,
+  env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
   {
     auth: {
       storage: AsyncStorage,

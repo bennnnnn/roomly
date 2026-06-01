@@ -84,7 +84,7 @@ Each entry: ID · status · owner · question · why it matters · target slice.
   ✓ `.cursor/mcp.json` adds the project-scoped Supabase MCP so migrations + types-gen run from the agent without sharing the DB password.
   ☐ Apply migration `20260531000001_profiles.sql` via MCP `apply_migration`.
   ☐ Run `generate_typescript_types` and replace the hand-written stub in `packages/db-types/src/index.ts`.
-  ☐ Paste `EXPO_PUBLIC_SUPABASE_URL` + `EXPO_PUBLIC_SUPABASE_ANON_KEY` into `apps/mobile/.env.local` (user-owned secret; not committed).
+  ☐ Paste `EXPO_PUBLIC_SUPABASE_URL` + `EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (new `sb_publishable_…` format) into `apps/mobile/.env.local` (user-owned secret; not committed).
 
 - **OQ-018 · open · agent · CI for pgTAP RLS tests.**
   `supabase/tests/profiles_rls.sql` exists but is not run in CI. Cheapest path: a GitHub Actions job that runs `supabase start` (slow first cold-start), `supabase db reset`, `supabase test db`. Alternative: a Docker-Compose Postgres + pgTAP image. Add when first non-trivial RLS edit lands.
