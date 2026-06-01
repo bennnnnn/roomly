@@ -16,6 +16,7 @@
   "dependencies": {
     "@expo/metro-runtime": "56.0.13",
     "@react-native-async-storage/async-storage": "2.2.0",
+    "@react-native-vector-icons/ionicons": "13.1.2",
     "@roomly/db-types": "workspace:*",
     "@roomly/lib": "workspace:*",
     "@roomly/ui-tokens": "workspace:*",

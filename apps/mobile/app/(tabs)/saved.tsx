@@ -1,9 +1,10 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
-import { ActivityIndicator, FlatList, Text, View } from 'react-native';
+import { FlatList, Text, View } from 'react-native';
 
 import { Button } from '../../src/components/Button';
-import { Card } from '../../src/components/Card';
+import { EmptyState } from '../../src/components/EmptyState';
+import { ListingCardSkeleton } from '../../src/components/Skeleton';
 import { toggleFavorite } from '../../src/features/listings/api/favorites';
 import { ListingCard } from '../../src/features/listings/components/ListingCard';
 import { useSavedListings } from '../../src/features/listings/hooks/useSavedListings';
@@ -36,12 +37,9 @@ export default function Saved() {
 
   if (query.isLoading) {
     return (
-      <View
-        testID="saved-loading"
-        className="flex-1 items-center justify-center gap-md bg-neutral-50 dark:bg-neutral-900"
-      >
-        <ActivityIndicator />
-        <Text className="text-body text-neutral-500">Loading saved listings…</Text>
+      <View testID="saved-loading" className="flex-1 gap-md bg-neutral-50 p-lg dark:bg-neutral-900">
+        <ListingCardSkeleton />
+        <ListingCardSkeleton />
       </View>
     );
   }
@@ -64,15 +62,16 @@ export default function Saved() {
 
   if (items.length === 0) {
     return (
-      <View testID="tab-saved" className="flex-1 gap-md bg-neutral-50 p-lg dark:bg-neutral-900">
-        <Text className="text-heading font-semibold text-neutral-900 dark:text-neutral-0">
-          Saved
-        </Text>
-        <Card>
-          <Text className="text-body text-neutral-500 dark:text-neutral-300">
-            You haven't saved any listings yet. Tap the heart on a listing to come back to it later.
+      <View testID="tab-saved" className="flex-1 bg-neutral-50 dark:bg-neutral-900">
+        <View className="border-b border-neutral-100 px-lg pb-sm pt-lg dark:border-neutral-800">
+          <Text className="text-heading font-semibold text-neutral-900 dark:text-neutral-0">
+            Saved
           </Text>
-        </Card>
+        </View>
+        <EmptyState
+          title="Nothing saved yet"
+          message="Tap the heart on a listing to save it here."
+        />
       </View>
     );
   }

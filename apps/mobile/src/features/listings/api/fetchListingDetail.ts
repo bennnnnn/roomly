@@ -23,6 +23,23 @@ export async function fetchListingDetail(
   if (error) throw error;
   if (!data) throw new Error('Listing not found');
 
+  let host: ListingDetail['host'] = null;
+  if (viewerId !== data.owner_id) {
+    const { data: hostRow } = await supabase
+      .from('profiles')
+      .select('display_name, account_type, company_name, is_verified')
+      .eq('id', data.owner_id)
+      .maybeSingle();
+    if (hostRow) {
+      host = {
+        displayName: hostRow.display_name,
+        accountType: hostRow.account_type,
+        companyName: hostRow.company_name,
+        isVerified: hostRow.is_verified,
+      };
+    }
+  }
+
   const photos = [...(data.listing_photos ?? [])].sort((a, b) => a.sort_order - b.sort_order);
   const signed = await signListingPhotoPaths(photos.map((p) => p.storage_path));
 
@@ -65,6 +82,7 @@ export async function fetchListingDetail(
     coverPhotoUrl: coverPath ? (signed.get(coverPath) ?? null) : null,
     isFavorite,
     isOwner: viewerId !== null && data.owner_id === viewerId,
+    host,
     photos: photos.map((p) => ({
       id: p.id,
       storagePath: p.storage_path,

@@ -59,7 +59,13 @@ export function ListingCard({ listing, onPress, onFavoriteToggle, testID }: List
         )}
       </View>
       <View className="gap-xs p-md">
-        <Text className="text-title font-semibold text-neutral-900 dark:text-neutral-0">
+        <Text
+          className="text-body font-medium text-neutral-900 dark:text-neutral-0"
+          numberOfLines={1}
+        >
+          {listing.title}
+        </Text>
+        <Text className="text-title font-semibold text-accent-600 dark:text-accent-400">
           {formatListingPrice(listing.priceCents)}
         </Text>
         <Text className="text-body text-neutral-700 dark:text-neutral-200" numberOfLines={1}>

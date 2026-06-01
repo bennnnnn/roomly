@@ -205,6 +205,12 @@ Foundation deps for env, logger, Supabase client, and Zustand session store. See
 | `next`          | `15.2.6` | 2026-06-01    | https://www.npmjs.com/package/next          | Next 16.x not available yet on npm      |
 | `@supabase/ssr` | `0.10.3` | 2026-06-01    | https://www.npmjs.com/package/@supabase/ssr | Admin service-role client (future wire) |
 
+## Verified at UI polish install (2026-06-01)
+
+| Package                               | Version  | Verified date | Source                                                            | Notes                                               |
+| ------------------------------------- | -------- | ------------- | ----------------------------------------------------------------- | --------------------------------------------------- |
+| `@react-native-vector-icons/ionicons` | `13.1.2` | 2026-06-01    | https://www.npmjs.com/package/@react-native-vector-icons/ionicons | Tab bar icons; SDK 56 replaces `@expo/vector-icons` |
+
 ## Bump log
 
 _(append rows here when bumping a dep; include version old → new, date, reason, PR link)_

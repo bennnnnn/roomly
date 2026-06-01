@@ -5,6 +5,7 @@ import '../global.css';
 import * as Linking from 'expo-linking';
 import { Stack, useRouter } from 'expo-router';
 import { useEffect } from 'react';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { usePushRegistration } from '../src/features/push/usePushRegistration';
 import { createSessionFromUrl } from '../src/lib/authDeepLink';
@@ -48,11 +49,13 @@ export default function RootLayout() {
   }, []);
 
   return (
-    <AppStripeProvider>
-      <QueryProvider>
-        <PasswordRecoveryListener />
-        <Stack screenOptions={{ headerShown: false }} />
-      </QueryProvider>
-    </AppStripeProvider>
+    <SafeAreaProvider>
+      <AppStripeProvider>
+        <QueryProvider>
+          <PasswordRecoveryListener />
+          <Stack screenOptions={{ headerShown: false }} />
+        </QueryProvider>
+      </AppStripeProvider>
+    </SafeAreaProvider>
   );
 }

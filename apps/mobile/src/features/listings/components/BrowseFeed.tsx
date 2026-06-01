@@ -1,9 +1,11 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
-import { ActivityIndicator, FlatList, Pressable, Text, View } from 'react-native';
+import { FlatList, Pressable, Text, View } from 'react-native';
 
 import { Button } from '../../../components/Button';
+import { EmptyState } from '../../../components/EmptyState';
+import { ListingCardSkeleton } from '../../../components/Skeleton';
 import { useSessionStatus } from '../../../state/session';
 import { toggleFavorite } from '../api/favorites';
 import { useBrowseListings } from '../hooks/useBrowseListings';
@@ -72,9 +74,10 @@ export function BrowseFeed() {
   // Loading
   if (query.isLoading) {
     return (
-      <View testID="browse-loading" className="flex-1 items-center justify-center gap-md">
-        <ActivityIndicator />
-        <Text className="text-body text-neutral-500">Loading listings…</Text>
+      <View testID="browse-loading" className="gap-md px-lg py-md">
+        <ListingCardSkeleton testID="browse-skeleton-1" />
+        <ListingCardSkeleton testID="browse-skeleton-2" />
+        <ListingCardSkeleton testID="browse-skeleton-3" />
       </View>
     );
   }
@@ -126,16 +129,13 @@ export function BrowseFeed() {
           </Pressable>
         </View>
 
-        <View testID="browse-empty" className="flex-1 items-center justify-center gap-md p-xl">
-          <Text className="text-center text-body text-neutral-500">
-            No listings here yet — be the first to list.
-          </Text>
-          <Button
-            label="List your place"
-            onPress={() => router.push('/listing/new')}
-            testID="browse-list-cta"
-          />
-        </View>
+        <EmptyState
+          testID="browse-empty"
+          title="No listings here yet"
+          message="Be the first to list a room in this area."
+          actionLabel="List your place"
+          onAction={() => router.push('/listing/new')}
+        />
 
         <FilterSheet
           visible={filterVisible}

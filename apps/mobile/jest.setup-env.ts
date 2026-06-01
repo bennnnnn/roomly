@@ -39,6 +39,8 @@ jest.mock('expo-apple-authentication', () => ({
   AppleAuthenticationScope: { FULL_NAME: 0, EMAIL: 1 },
 }));
 
+jest.mock('@react-native-vector-icons/ionicons', () => 'Ionicons');
+
 jest.mock('@react-native-async-storage/async-storage', () => {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const mock: unknown = require('@react-native-async-storage/async-storage/jest/async-storage-mock');

@@ -1,8 +1,9 @@
 import { useRouter } from 'expo-router';
-import { ActivityIndicator, FlatList, Pressable, Text, View } from 'react-native';
+import { FlatList, Pressable, Text, View } from 'react-native';
 
 import { Button } from '../../src/components/Button';
-import { Card } from '../../src/components/Card';
+import { EmptyState } from '../../src/components/EmptyState';
+import { Skeleton } from '../../src/components/Skeleton';
 import { useConversations } from '../../src/features/messaging/hooks/useConversations';
 
 export default function Messages() {
@@ -13,10 +14,11 @@ export default function Messages() {
     return (
       <View
         testID="messages-loading"
-        className="flex-1 items-center justify-center gap-md bg-neutral-50 dark:bg-neutral-900"
+        className="flex-1 gap-sm bg-neutral-50 p-lg dark:bg-neutral-900"
       >
-        <ActivityIndicator />
-        <Text className="text-body text-neutral-500">Loading messages…</Text>
+        <Skeleton className="h-16 w-full rounded-lg" />
+        <Skeleton className="h-16 w-full rounded-lg" />
+        <Skeleton className="h-16 w-full rounded-lg" />
       </View>
     );
   }
@@ -39,15 +41,16 @@ export default function Messages() {
 
   if (conversations.length === 0) {
     return (
-      <View testID="tab-messages" className="flex-1 gap-md bg-neutral-50 p-lg dark:bg-neutral-900">
-        <Text className="text-heading font-semibold text-neutral-900 dark:text-neutral-0">
-          Messages
-        </Text>
-        <Card>
-          <Text className="text-body text-neutral-500 dark:text-neutral-300">
-            No messages yet — start by contacting a host from a listing.
+      <View testID="tab-messages" className="flex-1 bg-neutral-50 dark:bg-neutral-900">
+        <View className="border-b border-neutral-100 px-lg pb-sm pt-lg dark:border-neutral-800">
+          <Text className="text-heading font-semibold text-neutral-900 dark:text-neutral-0">
+            Messages
           </Text>
-        </Card>
+        </View>
+        <EmptyState
+          title="No messages yet"
+          message="Contact a host from a listing to start a conversation."
+        />
       </View>
     );
   }

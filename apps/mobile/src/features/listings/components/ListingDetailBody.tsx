@@ -1,8 +1,12 @@
-import { Image, Pressable, ScrollView, Text, View } from 'react-native';
+import { ScrollView, Text, View } from 'react-native';
 
 import { Button } from '../../../components/Button';
+import { ExpandableText } from '../../../components/ExpandableText';
 import { formatListingPrice } from '../api/fetchBrowseListings';
 import { LISTING_TYPE_LABELS } from '../constants';
+
+import { HostMiniCard } from './HostMiniCard';
+import { ListingPhotoGallery } from './ListingPhotoGallery';
 
 import type { ListingDetail } from '../types';
 
@@ -23,39 +27,44 @@ export function ListingDetailBody({
   messageBusy = false,
   testID,
 }: ListingDetailBodyProps) {
-  const hero = listing.photos[0]?.signedUrl ?? listing.coverPhotoUrl;
+  const unavailable = listing.status !== 'active';
 
   return (
-    <ScrollView testID={testID} className="flex-1 bg-neutral-0 dark:bg-neutral-900">
-      <View className="aspect-video w-full bg-neutral-100 dark:bg-neutral-800">
-        {hero ? (
-          <Image
-            source={{ uri: hero }}
-            className="h-full w-full"
-            resizeMode="cover"
-            accessibilityIgnoresInvertColors
-          />
-        ) : null}
-      </View>
+    <ScrollView
+      testID={testID}
+      className="flex-1 bg-neutral-0 dark:bg-neutral-900"
+      contentContainerClassName="pb-xxl"
+    >
+      <ListingPhotoGallery photos={listing.photos} testID="listing-photo-gallery" />
       <View className="gap-md p-lg">
-        <Text className="text-display font-semibold text-neutral-900 dark:text-neutral-0">
+        <Text className="text-title font-semibold text-neutral-900 dark:text-neutral-0">
+          {listing.title}
+        </Text>
+        <Text className="text-display font-semibold text-accent-600 dark:text-accent-400">
           {formatListingPrice(listing.priceCents)}
+          <Text className="text-bodyLg font-normal text-neutral-500"> /mo</Text>
         </Text>
         <Text className="text-bodyLg text-neutral-700 dark:text-neutral-200">
           {LISTING_TYPE_LABELS[listing.type]} · {listing.areaLabel}
         </Text>
-        {!listing.isOwner && onViewHost ? (
-          <Pressable onPress={onViewHost} testID="listing-view-host">
-            <Text className="text-caption text-accent-500">View host profile</Text>
-          </Pressable>
-        ) : null}
         <Text className="text-caption text-neutral-500">
           Available {listing.availableFrom} · Min stay {String(listing.minMonths)} mo ·{' '}
           {String(listing.viewCount)} views
         </Text>
-        <Text className="text-body text-neutral-800 dark:text-neutral-100">
-          {listing.description}
-        </Text>
+
+        {!listing.isOwner && listing.host && onViewHost ? (
+          <HostMiniCard
+            displayName={listing.host.displayName}
+            accountType={listing.host.accountType}
+            companyName={listing.host.companyName}
+            isVerified={listing.host.isVerified}
+            onPress={onViewHost}
+            testID="listing-host-card"
+          />
+        ) : null}
+
+        <ExpandableText text={listing.description} testID="listing-description" />
+
         <View className="flex-row flex-wrap gap-sm">
           {listing.furnished ? <Tag label="Furnished" /> : null}
           {listing.petsAllowed ? <Tag label="Pets OK" /> : null}
@@ -66,18 +75,22 @@ export function ListingDetailBody({
           {listing.hasParking ? <Tag label="Parking" /> : null}
           {listing.hasLaundry ? <Tag label="Laundry" /> : null}
         </View>
-        {listing.status !== 'active' ? (
-          <Text className="text-body text-semantic-danger">
-            This listing is not live yet ({listing.status}).
-          </Text>
+
+        {unavailable ? (
+          <View className="rounded-md bg-neutral-100 p-md dark:bg-neutral-800">
+            <Text className="text-body text-neutral-600 dark:text-neutral-300">
+              This listing is no longer available.
+            </Text>
+          </View>
         ) : null}
+
         {listing.isOwner ? (
           <Button label="Edit listing" variant="secondary" onPress={onEdit} testID="listing-edit" />
         ) : (
           <Button
             label={messageBusy ? 'Opening chat…' : 'Message host'}
             variant="primary"
-            disabled={listing.status !== 'active' || messageBusy || !onMessage}
+            disabled={unavailable || messageBusy || !onMessage}
             loading={messageBusy}
             testID="listing-message"
             onPress={() => onMessage?.()}

@@ -1,8 +1,11 @@
+import * as Linking from 'expo-linking';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useState } from 'react';
-import { ActivityIndicator, Pressable, Text, View } from 'react-native';
+import { useCallback, useState } from 'react';
+import { Pressable, Share, Text, View } from 'react-native';
 
 import { Button } from '../../src/components/Button';
+import { ScreenHeader } from '../../src/components/ScreenHeader';
+import { ListingDetailSkeleton } from '../../src/components/Skeleton';
 import { ListingDetailBody } from '../../src/features/listings/components/ListingDetailBody';
 import { useListingDetail } from '../../src/features/listings/hooks/useListingDetail';
 import { createConversation } from '../../src/features/messaging/api/messaging';
@@ -18,6 +21,14 @@ export default function ListingDetailScreen() {
   const [messageBusy, setMessageBusy] = useState(false);
   const [messageError, setMessageError] = useState<string | undefined>();
   const [reportOpen, setReportOpen] = useState(false);
+
+  const handleShare = useCallback(async () => {
+    if (!id) return;
+    const url = Linking.createURL(`/listing/${id}`);
+    await Share.share({
+      message: `Check out this room on Roomly: ${url}`,
+    });
+  }, [id]);
 
   async function handleMessageHost(): Promise<void> {
     if (!user) {
@@ -48,20 +59,26 @@ export default function ListingDetailScreen() {
 
   if (query.isLoading) {
     return (
-      <View testID="listing-detail-loading" className="flex-1 items-center justify-center">
-        <ActivityIndicator />
+      <View className="flex-1 bg-neutral-0 dark:bg-neutral-900">
+        <ScreenHeader title="Listing" />
+        <ListingDetailSkeleton testID="listing-detail-loading" />
       </View>
     );
   }
 
   if (query.isError || !query.data) {
     return (
-      <View
-        testID="listing-detail-error"
-        className="flex-1 items-center justify-center gap-md p-xl"
-      >
-        <Text className="text-body">This listing is no longer available.</Text>
-        <Button label="Go back" variant="secondary" onPress={() => router.back()} />
+      <View className="flex-1 bg-neutral-0 dark:bg-neutral-900">
+        <ScreenHeader title="Listing" />
+        <View
+          testID="listing-detail-error"
+          className="flex-1 items-center justify-center gap-md p-xl"
+        >
+          <Text className="text-body text-neutral-600 dark:text-neutral-300">
+            This listing is no longer available.
+          </Text>
+          <Button label="Go back" variant="secondary" onPress={() => router.back()} />
+        </View>
       </View>
     );
   }
@@ -69,14 +86,22 @@ export default function ListingDetailScreen() {
   const listing = query.data;
 
   return (
-    <View className="flex-1">
-      {!listing.isOwner ? (
-        <View className="absolute right-lg top-lg z-10">
-          <Pressable onPress={() => setReportOpen(true)} testID="listing-report">
-            <Text className="text-caption text-neutral-500">Report</Text>
-          </Pressable>
-        </View>
-      ) : null}
+    <View className="flex-1 bg-neutral-0 dark:bg-neutral-900">
+      <ScreenHeader
+        title="Listing"
+        right={
+          <View className="flex-row items-center gap-md">
+            <Pressable onPress={() => void handleShare()} testID="listing-share">
+              <Text className="text-body text-accent-500">Share</Text>
+            </Pressable>
+            {!listing.isOwner ? (
+              <Pressable onPress={() => setReportOpen(true)} testID="listing-report">
+                <Text className="text-caption text-neutral-500">Report</Text>
+              </Pressable>
+            ) : null}
+          </View>
+        }
+      />
       <ListingDetailBody
         listing={listing}
         testID="listing-detail"

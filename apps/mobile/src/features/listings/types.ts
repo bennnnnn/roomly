@@ -28,6 +28,13 @@ export interface BrowseListingItem {
   isFavorite: boolean;
 }
 
+export interface ListingHostInfo {
+  displayName: string;
+  accountType: 'individual' | 'company';
+  companyName: string | null;
+  isVerified: boolean;
+}
+
 export interface ListingDetail extends BrowseListingItem {
   description: string;
   depositCents: number | null;
@@ -37,6 +44,7 @@ export interface ListingDetail extends BrowseListingItem {
   status: string;
   viewCount: number;
   ownerId: string;
+  host: ListingHostInfo | null;
   noSmoking: boolean;
   utilitiesIncluded: boolean;
   hasParking: boolean;

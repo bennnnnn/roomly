@@ -1,8 +1,10 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
-import { ActivityIndicator, FlatList, Image, Pressable, Text, View } from 'react-native';
+import { FlatList, Image, Pressable, Text, View } from 'react-native';
 
 import { Button } from '../../src/components/Button';
+import { ScreenHeader } from '../../src/components/ScreenHeader';
+import { ListingDetailSkeleton } from '../../src/components/Skeleton';
 import { formatListingPrice } from '../../src/features/listings/api/fetchBrowseListings';
 import { usePublicProfile } from '../../src/features/profile/hooks/usePublicProfile';
 import { ReportBlockSheet } from '../../src/features/safety/components/ReportBlockSheet';
@@ -15,17 +17,21 @@ export default function PublicProfileScreen() {
 
   if (query.isLoading) {
     return (
-      <View className="flex-1 items-center justify-center bg-neutral-0 dark:bg-neutral-900">
-        <ActivityIndicator />
+      <View className="flex-1 bg-neutral-0 dark:bg-neutral-900">
+        <ScreenHeader title="Host" />
+        <ListingDetailSkeleton />
       </View>
     );
   }
 
   if (query.isError || !query.data) {
     return (
-      <View className="flex-1 items-center justify-center gap-md p-xl">
-        <Text className="text-body">This profile is unavailable.</Text>
-        <Button label="Go back" variant="secondary" onPress={() => router.back()} />
+      <View className="flex-1 bg-neutral-0 dark:bg-neutral-900">
+        <ScreenHeader title="Host" />
+        <View className="flex-1 items-center justify-center gap-md p-xl">
+          <Text className="text-body">This profile is unavailable.</Text>
+          <Button label="Go back" variant="secondary" onPress={() => router.back()} />
+        </View>
       </View>
     );
   }
@@ -34,9 +40,20 @@ export default function PublicProfileScreen() {
 
   return (
     <View className="flex-1 bg-neutral-0 dark:bg-neutral-900">
-      <View className="border-b border-neutral-100 px-lg pb-md pt-lg dark:border-neutral-800">
-        <View className="flex-row items-start justify-between">
-          <View className="flex-1">
+      <ScreenHeader
+        title="Host"
+        right={
+          <Pressable onPress={() => setReportOpen(true)} testID="profile-report">
+            <Text className="text-caption text-neutral-500">Report</Text>
+          </Pressable>
+        }
+      />
+      <FlatList
+        data={profile.listings}
+        keyExtractor={(item) => item.id}
+        contentContainerClassName="p-lg gap-md pb-xxl"
+        ListHeaderComponent={
+          <View className="mb-md gap-xs">
             <Text className="text-heading font-semibold text-neutral-900 dark:text-neutral-0">
               {profile.displayName}
               {profile.isVerified ? ' ✓' : ''}
@@ -46,23 +63,13 @@ export default function PublicProfileScreen() {
                 {profile.companyName}
               </Text>
             ) : null}
-            <Text className="mt-xs text-caption text-neutral-500">
+            <Text className="text-caption text-neutral-500">
               Member since {new Date(profile.memberSince).toLocaleDateString()}
             </Text>
+            <Text className="mt-md text-title font-semibold text-neutral-900 dark:text-neutral-0">
+              Listings
+            </Text>
           </View>
-          <Pressable onPress={() => setReportOpen(true)} testID="profile-report">
-            <Text className="text-caption text-neutral-500">Report</Text>
-          </Pressable>
-        </View>
-      </View>
-      <FlatList
-        data={profile.listings}
-        keyExtractor={(item) => item.id}
-        contentContainerClassName="p-lg gap-md pb-xxl"
-        ListHeaderComponent={
-          <Text className="mb-sm text-title font-semibold text-neutral-900 dark:text-neutral-0">
-            Listings
-          </Text>
         }
         ListEmptyComponent={<Text className="text-body text-neutral-500">No active listings.</Text>}
         renderItem={({ item }) => (
