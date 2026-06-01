@@ -60,6 +60,8 @@ export default function Me() {
         <MenuDivider />
         <MenuItem label="My listings" icon="🏠" onPress={() => router.push('/my-listings')} />
         <MenuDivider />
+        <MenuItem label="Billing" icon="💳" onPress={() => router.push('/billing')} />
+        <MenuDivider />
         <MenuItem label="Settings" icon="⚙️" onPress={() => router.push('/settings')} />
       </Card>
 

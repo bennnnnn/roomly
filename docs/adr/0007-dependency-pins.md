@@ -183,10 +183,11 @@ Foundation deps for env, logger, Supabase client, and Zustand session store. See
 
 ## Verified at Slice 3 / gap-fix install (2026-06-01)
 
-| Package             | Version   | Verified date | Source                                                 | Notes                                                                                    |
-| ------------------- | --------- | ------------- | ------------------------------------------------------ | ---------------------------------------------------------------------------------------- |
-| `react-native-maps` | `1.20.1`  | 2026-06-01    | https://github.com/react-native-maps/react-native-maps | Map view toggle in browse feed (Slice 3 gap). Apple Maps on iOS, Google Maps on Android. |
-| `expo-location`     | `56.0.15` | 2026-06-01    | https://www.npmjs.com/package/expo-location/v/56.0.15  | Browse “Use my location” (Slice 3). Installed via `npx expo install`.                    |
+| Package             | Version   | Verified date | Source                                                   | Notes                                                                                    |
+| ------------------- | --------- | ------------- | -------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `react-native-maps` | `1.20.1`  | 2026-06-01    | https://github.com/react-native-maps/react-native-maps   | Map view toggle in browse feed (Slice 3 gap). Apple Maps on iOS, Google Maps on Android. |
+| `expo-location`     | `56.0.15` | 2026-06-01    | https://www.npmjs.com/package/expo-location/v/56.0.15    | Browse “Use my location” (Slice 3). Installed via `npx expo install`.                    |
+| `expo-secure-store` | `56.0.4`  | 2026-06-01    | https://www.npmjs.com/package/expo-secure-store/v/56.0.4 | Supabase auth session in keychain (PRD §2.2).                                            |
 
 ## Verified at Slice 7 install (2026-06-01)
 

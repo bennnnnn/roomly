@@ -1,8 +1,11 @@
+import { useRouter } from 'expo-router';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 
 import { Card } from '../src/components/Card';
+import { supabase } from '../src/lib/supabaseClient';
 
 export default function Settings() {
+  const router = useRouter();
   return (
     <ScrollView className="flex-1 bg-neutral-0 dark:bg-neutral-900">
       <View className="border-b border-neutral-100 px-lg pb-sm pt-lg dark:border-neutral-800">
@@ -15,6 +18,7 @@ export default function Settings() {
         {/* Account */}
         <Card>
           <Text className="text-caption font-semibold uppercase text-neutral-500">Account</Text>
+          <SettingRow label="Billing history" onPress={() => router.push('/billing')} />
           <SettingRow label="Change email" />
           <SettingRow label="Change password" />
           <SettingRow label="Linked accounts" />
@@ -43,16 +47,35 @@ export default function Settings() {
         {/* Danger zone */}
         <Card>
           <Text className="text-caption font-semibold uppercase text-red-500">Danger zone</Text>
-          <SettingRow label="Delete account" destructive />
+          <SettingRow
+            label="Delete account"
+            destructive
+            onPress={() => {
+              void supabase.auth.signOut();
+              router.replace('/sign-in');
+            }}
+          />
         </Card>
       </View>
     </ScrollView>
   );
 }
 
-function SettingRow({ label, destructive = false }: { label: string; destructive?: boolean }) {
+function SettingRow({
+  label,
+  destructive = false,
+  onPress,
+}: {
+  label: string;
+  destructive?: boolean;
+  onPress?: () => void;
+}) {
   return (
-    <Pressable className="flex-row items-center justify-between py-sm" accessibilityRole="button">
+    <Pressable
+      onPress={onPress}
+      className="flex-row items-center justify-between py-sm"
+      accessibilityRole="button"
+    >
       <Text
         className={`text-body ${destructive ? 'text-red-500' : 'text-neutral-900 dark:text-neutral-0'}`}
       >
