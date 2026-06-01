@@ -63,7 +63,8 @@ These are pinned in this ADR but their packages are added only when their respec
 
 ### Local environment notes
 
-- Local Node is `v26.0.0` (Homebrew). CI uses Node 20 LTS for stability (see `.github/workflows/ci.yml`).
+- Local Node is `v26.0.0` (Homebrew). CI uses Node **22 LTS** (pnpm 11 dropped Node 20; see `.github/workflows/ci.yml` and [pnpm 11 release notes](https://github.com/pnpm/pnpm/releases/tag/v11.0.0)).
+- `engines.node` in root `package.json` is `>=22.0.0` so `pnpm install` refuses to run on older Node.
 - `corepack` is **not** present in this Homebrew Node 26 install, so pnpm is installed globally via `npm i -g pnpm@11.4.0`. The `packageManager` field in root `package.json` still pins `pnpm@11.4.0` so `pnpm install` rejects mismatched versions.
 - `pnpm install` produced one postinstall script (`unrs-resolver`, native dep of `eslint-plugin-import-x`). Explicitly allowed in `pnpm-workspace.yaml#allowBuilds`; nothing else runs at install.
 

@@ -109,7 +109,7 @@ If an MCP cannot do what you need, document the gap in `docs/mcp-gaps.md` and on
 | Monorepo     | pnpm workspaces + Turborepo                             | yes                     |
 | CI           | GitHub Actions                                          | yes                     |
 | Builds       | EAS Build + Submit                                      | yes                     |
-| Node runtime | 20 LTS (Supabase JS requirement)                        | yes                     |
+| Node runtime | 22 LTS (pnpm 11 requirement; Supabase JS / Next 16 OK)  | yes                     |
 
 Exact versions are pinned in `package.json` and recorded with citations in `docs/adr/0007-dependency-pins.md` at the moment of install.
 

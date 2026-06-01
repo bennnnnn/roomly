@@ -28,10 +28,10 @@ jobs:
           version: 11.4.0
           run_install: false
 
-      - name: Install Node 20 LTS (with built-in pnpm store cache)
+      - name: Install Node 22 LTS (with built-in pnpm store cache)
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: 'pnpm'
           cache-dependency-path: pnpm-lock.yaml
 

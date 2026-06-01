@@ -6,7 +6,7 @@
   "license": "UNLICENSED",
   "packageManager": "pnpm@11.4.0",
   "engines": {
-    "node": ">=20.9.0"
+    "node": ">=22.0.0"
   },
   "workspaces": [
     "apps/*",
