@@ -79,10 +79,17 @@ select lives_ok(
   'Alice can update her own profile'
 );
 
-select throws_ok(
-  $$ update public.profiles set display_name = 'hack' where id = '00000000-0000-0000-0000-000000000002' $$,
-  '42501',
-  null,
+select is(
+  (
+    with updated as (
+      update public.profiles
+      set display_name = 'hack'
+      where id = '00000000-0000-0000-0000-000000000002'
+      returning id
+    )
+    select count(*)::int from updated
+  ),
+  0,
   'Alice cannot update Bob''s profile (RLS rejects)'
 );
 
@@ -101,10 +108,15 @@ select throws_ok(
 -- 6. profiles DELETE — no direct policy; cascade is the only path.
 -- ============================================================================
 
-select throws_ok(
-  $$ delete from public.profiles where id = '00000000-0000-0000-0000-000000000001' $$,
-  '42501',
-  null,
+select is(
+  (
+    with deleted as (
+      delete from public.profiles where id = '00000000-0000-0000-0000-000000000001'
+      returning id
+    )
+    select count(*)::int from deleted
+  ),
+  0,
   'profiles DELETE is rejected (only cascade from auth.users may delete)'
 );
 

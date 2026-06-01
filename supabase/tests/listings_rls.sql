@@ -69,9 +69,9 @@ select is_empty(
 
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000010';
 
-select throws_ok(
+select throws_like(
   $$ update public.listings set status = 'active' where id = '00000000-0000-0000-0000-000000000020' $$,
-  '42501',
+  '%server-only%',
   'owner cannot self-activate listing (publish is server-only in Slice 4)'
 );
 

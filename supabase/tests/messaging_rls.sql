@@ -87,10 +87,13 @@ select lives_ok(
 -- Non-participant cannot insert a message
 -- ============================================================================
 
--- Create a third user
+-- Create a third user (requires service_role for auth.users insert).
+set local role = service_role;
+
 insert into auth.users (id, email, aud, role)
 values ('00000000-0000-0000-0000-000000000012', 'outsider@example.com', 'authenticated', 'authenticated');
 
+set local role = authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000012';
 
 select throws_ok(
