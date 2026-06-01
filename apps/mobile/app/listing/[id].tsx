@@ -25,7 +25,7 @@ export default function ListingDetailScreen() {
       return;
     }
     if (!user.email_confirmed_at) {
-      setMessageError('Verify your email before messaging.');
+      router.push('/verify-email');
       return;
     }
     const listing = query.data;

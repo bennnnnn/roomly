@@ -59,10 +59,22 @@ enable_signup = false
 enable_confirmations = false
 
 [auth.external.apple]
-enabled = false  # enable after Apple Developer + Sign in with Apple setup (OQ-004)
+enabled = true
+client_id = "env(SUPABASE_AUTH_EXTERNAL_APPLE_CLIENT_ID)"
+secret = "env(SUPABASE_AUTH_EXTERNAL_APPLE_SECRET)"
 
 [auth.external.google]
-enabled = false  # enable after Google Cloud OAuth setup
+enabled = true
+client_id = "env(SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID)"
+secret = "env(SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET)"
+redirect_uri = ""
+skip_nonce_check = false
+
+[functions.expire-listings]
+verify_jwt = false
+
+[functions.stripe-webhook]
+verify_jwt = false
 
 [edge_runtime]
 enabled = true

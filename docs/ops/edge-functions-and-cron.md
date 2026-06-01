@@ -31,7 +31,18 @@ POST /functions/v1/expire-listings
 Authorization: Bearer <CRON_SECRET>
 ```
 
-Schedule daily (or hourly) via [Supabase Cron](https://supabase.com/docs/guides/functions/schedule-functions) or an external scheduler (GitHub Actions, etc.).
+Schedule daily (or hourly) via [Supabase Cron](https://supabase.com/docs/guides/functions/schedule-functions) or the repo workflow **Expire listings cron** (`.github/workflows/expire-listings-cron.yml`).
+
+### GitHub Actions (recommended)
+
+Add repository secrets:
+
+| Secret         | Value                                            |
+| -------------- | ------------------------------------------------ |
+| `SUPABASE_URL` | `https://<project-ref>.supabase.co`              |
+| `CRON_SECRET`  | Same value as Edge Function secret `CRON_SECRET` |
+
+The workflow runs daily at 06:00 UTC and skips gracefully if secrets are not configured (useful before first deploy).
 
 Example pg_cron + `pg_net` (Dashboard SQL) — adjust URL and secret:
 

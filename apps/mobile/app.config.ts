@@ -14,6 +14,7 @@ const config: ExpoConfig = {
   ios: {
     bundleIdentifier: 'com.roomly.app',
     supportsTablet: false,
+    usesAppleSignIn: true,
   },
   android: {
     package: 'com.roomly.app',

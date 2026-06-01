@@ -1,7 +1,7 @@
 import { Redirect } from 'expo-router';
 import { ActivityIndicator, View } from 'react-native';
 
-import { useSessionStatus } from '../src/state/session';
+import { useSessionStatus, useUser } from '../src/state/session';
 
 /**
  * Root route — gates everything by session status.
@@ -15,6 +15,7 @@ import { useSessionStatus } from '../src/state/session';
  */
 export default function Index() {
   const status = useSessionStatus();
+  const user = useUser();
 
   if (status === 'loading') {
     return (
@@ -28,6 +29,9 @@ export default function Index() {
   }
 
   if (status === 'authenticated') {
+    if (user && !user.email_confirmed_at) {
+      return <Redirect href="/verify-email" />;
+    }
     return <Redirect href="/browse" />;
   }
 

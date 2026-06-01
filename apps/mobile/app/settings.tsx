@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, Switch, Text, View } from 'react-native';
 
 import { Card } from '../src/components/Card';
+import { useOwnedListingCount } from '../src/features/listings/hooks/useOwnedListingCount';
 import { fetchBlockedUsers, unblockUser } from '../src/features/settings/api/blockedUsers';
 import {
   fetchNotificationPreferences,
@@ -20,6 +21,8 @@ export default function Settings() {
   const [prefsLoading, setPrefsLoading] = useState(true);
   const [blocked, setBlocked] = useState<{ blocked_id: string; created_at: string }[]>([]);
   const [blockedLoading, setBlockedLoading] = useState(true);
+  const { data: ownedListingCount = 0 } = useOwnedListingCount(Boolean(user));
+  const isHost = ownedListingCount > 0;
 
   const loadPrefs = useCallback(async () => {
     if (!user) return;
@@ -67,6 +70,12 @@ export default function Settings() {
         <Card>
           <Text className="text-caption font-semibold uppercase text-neutral-500">Account</Text>
           <SettingRow label="Billing history" onPress={() => router.push('/billing')} />
+          {isHost ? (
+            <SettingRow
+              label="Account type"
+              onPress={() => router.push('/settings/account-type')}
+            />
+          ) : null}
           <SettingRow label="Change email" />
           <SettingRow label="Change password" />
           <SettingRow label="Linked accounts" />
