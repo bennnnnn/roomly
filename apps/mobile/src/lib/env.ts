@@ -14,14 +14,24 @@ import { defineEnv } from '@roomly/lib';
  * If you need a new env var here, add it to `.env.example` first, document
  * it in ADR-0009's table, then add it below.
  */
+// The single legal site for `process.env` access in apps/mobile/src. The
+// `no-restricted-syntax` rule in `eslint.config.mjs` flags this anywhere
+// else; this file is on the allowlist.
+const getter = (key: string): string | undefined => process.env[key] as string | undefined;
+
 export const env = defineEnv(
   {
     EXPO_PUBLIC_SUPABASE_URL: { required: true, visibility: 'public' },
     EXPO_PUBLIC_SUPABASE_ANON_KEY: { required: true, visibility: 'public' },
+    // Optional observability vars — when absent, adapters are not registered
+    // and the logger remains a no-op (safe for tests/CI/pre-DSN dev).
+    EXPO_PUBLIC_SENTRY_DSN: { required: false, visibility: 'public' },
+    EXPO_PUBLIC_POSTHOG_API_KEY: { required: false, visibility: 'public' },
+    EXPO_PUBLIC_POSTHOG_HOST: { required: false, visibility: 'public' },
   },
   {
     runtime: 'client',
     publicPrefix: 'EXPO_PUBLIC_',
-    getter: (key) => process.env[key] as string | undefined,
+    getter,
   },
 );
