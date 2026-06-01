@@ -29,9 +29,7 @@ export default function Index() {
   }
 
   if (status === 'authenticated') {
-    // (app) group lands in Slice 1F. For now redirect to /home placeholder
-    // (created in 1F); until that route exists, fall back to a stub view.
-    return <Redirect href="/home" />;
+    return <Redirect href="/browse" />;
   }
 
   return <WelcomeScreen />;
