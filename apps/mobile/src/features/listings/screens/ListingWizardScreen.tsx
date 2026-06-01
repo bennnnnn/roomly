@@ -282,17 +282,36 @@ export default function ListingWizardScreen({ mode, listingId }: ListingWizardSc
             testID="wizard-next"
           />
         ) : (
-          <Button
-            label="Save draft"
-            variant="secondary"
-            loading={busy}
-            onPress={() => {
-              void saveDraft().then((ok) => {
-                if (ok) router.back();
-              });
-            }}
-            testID="wizard-save-exit"
-          />
+          <View className="flex-1 gap-sm">
+            <Button
+              label="Pay & publish"
+              loading={busy}
+              onPress={() => {
+                const lid = store.listingId;
+                if (!lid) return;
+                void saveDraft().then((ok) => {
+                  if (ok) {
+                    router.push({
+                      pathname: '/listing/[id]/payment',
+                      params: { id: lid },
+                    });
+                  }
+                });
+              }}
+              testID="wizard-publish"
+            />
+            <Button
+              label="Save draft"
+              variant="secondary"
+              disabled={busy}
+              onPress={() => {
+                void saveDraft().then((ok) => {
+                  if (ok) router.back();
+                });
+              }}
+              testID="wizard-save-exit"
+            />
+          </View>
         )}
       </View>
     </ScrollView>
@@ -450,15 +469,27 @@ function StepCopy() {
 }
 
 function StepReview() {
+  const s = useListingWizardStore();
   return (
     <View className="gap-sm rounded-lg border border-neutral-200 p-md dark:border-neutral-700">
       <Text className="text-body font-medium text-neutral-900 dark:text-neutral-0">Review</Text>
-      <Text className="text-body text-neutral-600 dark:text-neutral-300">
-        Your draft is saved. Pay & publish arrives in Slice 4 (Stripe PaymentSheet).
+      <Text className="text-caption text-neutral-500">
+        Type: {s.type ? LISTING_TYPE_LABELS[s.type] : '—'}
       </Text>
       <Text className="text-caption text-neutral-500">
-        Active listings appear in Browse after payment confirms.
+        Photos: {String(s.photos.length)} uploaded
       </Text>
+      <Text className="text-caption text-neutral-500">Area: {s.areaLabel || '—'}</Text>
+      <Text className="text-caption text-neutral-500">
+        ${s.priceDollars || '—'}/mo · Available {s.availableFrom || '—'} · Min {s.minMonths || '—'}{' '}
+        mo
+      </Text>
+      <Text className="text-caption text-neutral-500">Title: {s.title || '—'}</Text>
+      <View className="mt-sm border-t border-neutral-100 pt-sm dark:border-neutral-800">
+        <Text className="text-body text-neutral-600 dark:text-neutral-300">
+          Ready to publish! Tap "Pay & publish" below to make your listing live for 30 days.
+        </Text>
+      </View>
     </View>
   );
 }
