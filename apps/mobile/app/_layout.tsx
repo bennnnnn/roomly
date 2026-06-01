@@ -3,14 +3,28 @@
 import '../global.css';
 
 import * as Linking from 'expo-linking';
-import { Stack } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 import { useEffect } from 'react';
 
 import { usePushRegistration } from '../src/features/push/usePushRegistration';
 import { createSessionFromUrl } from '../src/lib/authDeepLink';
+import { supabase } from '../src/lib/supabaseClient';
 import { QueryProvider } from '../src/providers/QueryProvider';
 import { AppStripeProvider } from '../src/providers/StripeProvider';
 import { bootstrapSession } from '../src/state/session';
+
+function PasswordRecoveryListener(): null {
+  const router = useRouter();
+  useEffect(() => {
+    const { data } = supabase.auth.onAuthStateChange((event) => {
+      if (event === 'PASSWORD_RECOVERY') {
+        router.push('/update-password');
+      }
+    });
+    return () => data.subscription.unsubscribe();
+  }, [router]);
+  return null;
+}
 
 export default function RootLayout() {
   usePushRegistration();
@@ -36,6 +50,7 @@ export default function RootLayout() {
   return (
     <AppStripeProvider>
       <QueryProvider>
+        <PasswordRecoveryListener />
         <Stack screenOptions={{ headerShown: false }} />
       </QueryProvider>
     </AppStripeProvider>

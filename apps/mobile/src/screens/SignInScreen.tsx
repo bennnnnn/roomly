@@ -1,5 +1,6 @@
+import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { KeyboardAvoidingView, Platform, Text, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, Pressable, Text, View } from 'react-native';
 
 import { Button } from '../components/Button';
 import { Input } from '../components/Input';
@@ -26,6 +27,7 @@ function isLikelyEmail(value: string): boolean {
 }
 
 export default function SignInScreen() {
+  const router = useRouter();
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState<Status>('idle');
   const [errorMessage, setErrorMessage] = useState<string | undefined>();
@@ -145,6 +147,13 @@ export default function SignInScreen() {
               disabled={!canSubmit}
               testID="sign-in-submit"
             />
+            <Pressable
+              onPress={() => router.push('/reset-password')}
+              className="py-sm"
+              testID="sign-in-forgot-password"
+            >
+              <Text className="text-center text-caption text-accent-500">Forgot password?</Text>
+            </Pressable>
           </>
         )}
       </View>

@@ -4,6 +4,7 @@ import { Pressable, ScrollView, Text, View } from 'react-native';
 import { Button } from '../../src/components/Button';
 import { Card } from '../../src/components/Card';
 import { useOwnedListingCount } from '../../src/features/listings/hooks/useOwnedListingCount';
+import { useOwnProfile } from '../../src/features/profile/hooks/useOwnProfile';
 import { logger } from '../../src/lib/logger';
 import { supabase } from '../../src/lib/supabaseClient';
 import { useUser } from '../../src/state/session';
@@ -18,7 +19,10 @@ export default function Me() {
   const user = useUser();
   const router = useRouter();
   const { data: listingCount = 0 } = useOwnedListingCount(Boolean(user));
+  const { data: profile } = useOwnProfile(Boolean(user));
   const isHost = listingCount > 0;
+  const displayName = profile?.displayName ?? user?.email ?? 'unknown';
+  const initial = displayName.charAt(0).toUpperCase();
 
   async function handleSignOut(): Promise<void> {
     const { error } = await supabase.auth.signOut();
@@ -37,17 +41,22 @@ export default function Me() {
 
       <Card>
         <View className="items-center gap-sm">
-          <View className="h-16 w-16 items-center justify-center rounded-full bg-accent-100 dark:bg-accent-900/30">
-            <Text className="text-heading text-accent-500">
-              {user?.email?.charAt(0).toUpperCase() ?? '?'}
-            </Text>
-          </View>
+          <Pressable
+            onPress={() => router.push('/settings/edit-profile')}
+            className="h-16 w-16 items-center justify-center rounded-full bg-accent-100 dark:bg-accent-900/30"
+            accessibilityRole="button"
+            accessibilityLabel="Edit profile"
+            testID="me-edit-profile"
+          >
+            <Text className="text-heading text-accent-500">{initial}</Text>
+          </Pressable>
           <Text
             className="text-title font-semibold text-neutral-900 dark:text-neutral-0"
-            testID="me-email"
+            testID="me-display-name"
           >
-            {user?.email ?? 'unknown'}
+            {displayName}
           </Text>
+          <Text className="text-caption text-neutral-500">{user?.email ?? ''}</Text>
           <Text className="text-caption text-neutral-500">
             Member since {user?.created_at ? new Date(user.created_at).toLocaleDateString() : '—'}
           </Text>

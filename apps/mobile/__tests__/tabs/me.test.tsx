@@ -1,3 +1,7 @@
+jest.mock('../../src/features/profile/hooks/useOwnProfile', () => ({
+  useOwnProfile: () => ({ data: undefined }),
+}));
+
 jest.mock('../../src/lib/supabaseClient', () => ({
   supabase: {
     auth: {
@@ -52,12 +56,12 @@ describe('Me tab', () => {
       user: { id: 'u1', email: 'me@example.com' } as never,
     });
     renderMe();
-    expect(screen.getByTestId('me-email')).toHaveTextContent('me@example.com');
+    expect(screen.getByTestId('me-display-name')).toHaveTextContent('me@example.com');
   });
 
   it('falls back to "unknown" when no user is on the store', () => {
     renderMe();
-    expect(screen.getByTestId('me-email')).toHaveTextContent('unknown');
+    expect(screen.getByTestId('me-display-name')).toHaveTextContent('unknown');
   });
 
   it('calls supabase.auth.signOut on press', async () => {

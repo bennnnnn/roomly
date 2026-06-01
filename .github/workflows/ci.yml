@@ -87,4 +87,4 @@ jobs:
           deno-version: v2.1.4
 
       - name: Deno test
-        run: deno test --allow-env --allow-read supabase/functions/create-payment-intent/index.test.ts supabase/functions/stripe-webhook/index.test.ts supabase/functions/register-push-token/index.test.ts supabase/functions/expire-listings/index.test.ts
+        run: deno test --allow-env --allow-read supabase/functions/create-payment-intent/index.test.ts supabase/functions/stripe-webhook/index.test.ts supabase/functions/register-push-token/index.test.ts supabase/functions/expire-listings/index.test.ts supabase/functions/delete-account/index.test.ts

@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, Switch, Text, View } from 'react-native';
+import { ActivityIndicator, Alert, Pressable, ScrollView, Switch, Text, View } from 'react-native';
 
 import { Card } from '../src/components/Card';
 import { useOwnedListingCount } from '../src/features/listings/hooks/useOwnedListingCount';
@@ -9,7 +9,8 @@ import {
   fetchNotificationPreferences,
   updateNotificationPreferences,
 } from '../src/features/settings/api/notificationPreferences';
-import { supabase } from '../src/lib/supabaseClient';
+import { LEGAL_URLS } from '../src/lib/legalUrls';
+import { openExternalUrl } from '../src/lib/openExternalUrl';
 import { useUser } from '../src/state/session';
 
 import type { NotificationPreferences } from '../src/features/settings/api/notificationPreferences';
@@ -69,16 +70,18 @@ export default function Settings() {
       <View className="gap-lg p-lg">
         <Card>
           <Text className="text-caption font-semibold uppercase text-neutral-500">Account</Text>
-          <SettingRow label="Billing history" onPress={() => router.push('/billing')} />
+          <SettingRow label="Edit profile" onPress={() => router.push('/settings/edit-profile')} />
+          {isHost ? (
+            <SettingRow label="Billing history" onPress={() => router.push('/billing')} />
+          ) : null}
           {isHost ? (
             <SettingRow
               label="Account type"
               onPress={() => router.push('/settings/account-type')}
             />
           ) : null}
-          <SettingRow label="Change email" />
-          <SettingRow label="Change password" />
-          <SettingRow label="Linked accounts" />
+          <SettingRow label="Change email" onPress={() => router.push('/settings/change-email')} />
+          <SettingRow label="Change password" onPress={() => router.push('/reset-password')} />
         </Card>
 
         <Card>
@@ -147,10 +150,19 @@ export default function Settings() {
           <Text className="text-caption font-semibold uppercase text-neutral-500">
             Legal & support
           </Text>
-          <SettingRow label="Terms of service" />
-          <SettingRow label="Privacy policy" />
-          <SettingRow label="Help & FAQ" />
-          <SettingRow label="Contact support" />
+          <SettingRow
+            label="Terms of service"
+            onPress={() => void openExternalUrl(LEGAL_URLS.terms)}
+          />
+          <SettingRow
+            label="Privacy policy"
+            onPress={() => void openExternalUrl(LEGAL_URLS.privacy)}
+          />
+          <SettingRow label="Help & FAQ" onPress={() => void openExternalUrl(LEGAL_URLS.help)} />
+          <SettingRow
+            label="Contact support"
+            onPress={() => void openExternalUrl(LEGAL_URLS.support)}
+          />
         </Card>
 
         <Card>
@@ -159,8 +171,18 @@ export default function Settings() {
             label="Delete account"
             destructive
             onPress={() => {
-              void supabase.auth.signOut();
-              router.replace('/sign-in');
+              Alert.alert(
+                'Delete account?',
+                'This permanently removes your account and listings.',
+                [
+                  { text: 'Cancel', style: 'cancel' },
+                  {
+                    text: 'Continue',
+                    style: 'destructive',
+                    onPress: () => router.push('/settings/delete-account'),
+                  },
+                ],
+              );
             }}
           />
         </Card>

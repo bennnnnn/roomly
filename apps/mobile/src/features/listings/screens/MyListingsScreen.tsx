@@ -56,6 +56,11 @@ export default function MyListingsScreen() {
   }
 
   const all = query.data ?? [];
+  const expiringSoonCount = all.filter((item) => {
+    if (item.status !== 'active' || !item.expires_at) return false;
+    const daysLeft = (new Date(item.expires_at).getTime() - Date.now()) / 86_400_000;
+    return daysLeft > 0 && daysLeft <= 3;
+  }).length;
 
   if (all.length === 0) {
     return (
@@ -96,6 +101,14 @@ export default function MyListingsScreen() {
             </Pressable>
           ))}
         </View>
+        {expiringSoonCount > 0 ? (
+          <View className="mt-md rounded-md bg-amber-50 p-sm dark:bg-amber-900/20">
+            <Text className="text-caption text-amber-800 dark:text-amber-200">
+              {expiringSoonCount} listing{expiringSoonCount === 1 ? '' : 's'} expiring within 3 days
+              — renew to stay visible.
+            </Text>
+          </View>
+        ) : null}
       </View>
       <FlatList
         data={filtered}

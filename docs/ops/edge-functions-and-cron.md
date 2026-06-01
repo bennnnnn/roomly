@@ -10,6 +10,7 @@ supabase functions deploy stripe-webhook
 supabase functions deploy register-push-token
 supabase functions deploy notify-new-message
 supabase functions deploy expire-listings
+supabase functions deploy delete-account
 ```
 
 Set secrets in the Supabase Dashboard (Project → Edge Functions → Secrets):
