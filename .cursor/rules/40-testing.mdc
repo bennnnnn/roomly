@@ -1,0 +1,38 @@
+---
+description: Testing conventions for Roomly (unit, integration, RLS, Edge).
+globs: **/*.{test,spec}.{ts,tsx}
+alwaysApply: false
+---
+
+# Testing
+
+## Mandatory
+
+- `packages/lib/**` — 100% line coverage. CI fails on regression.
+- New Postgres RPC or RLS policy — at least one pgTAP test (positive + negative).
+- New Edge Function — Deno test covering happy path + auth failure + idempotency.
+- New hook in `apps/mobile/src/features/**` — RNTL `renderHook` test.
+
+## Naming
+
+- `*.test.ts` for unit tests, `*.spec.ts` for integration/Playwright.
+- One `describe` per public function / hook / component.
+
+## Style
+
+- Arrange / Act / Assert blocks separated by a blank line.
+- One assertion-per-behavior — no kitchen-sink tests.
+- Fixtures live next to the test in `__fixtures__/`. No shared global mocks.
+
+## Forbidden
+
+- `it.skip` / `xit` without a linked issue.
+- Snapshot tests for business logic — only for stable presentational components.
+- Network calls in unit tests. Use `msw` or DB transaction rollback.
+
+## Running
+
+- `pnpm test` — Jest + RNTL across all packages.
+- `pnpm test:db` — `supabase test db` (pgTAP).
+- `pnpm test:fn` — `supabase functions test` (Deno).
+- `pnpm gate` — typecheck + lint + all of the above.

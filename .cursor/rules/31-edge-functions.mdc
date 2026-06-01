@@ -1,0 +1,41 @@
+---
+description: Supabase Edge Function conventions (JWT pin, idempotency, no client trust).
+globs: supabase/functions/**/*.ts
+alwaysApply: false
+---
+
+# Edge Functions (Deno)
+
+## Auth
+
+- **JWT-pinned.** Always read the JWT from `Authorization: Bearer …` and assert `caller.sub === expected`.
+- **Never** accept `senderId`, `userId`, or any identity from the request body.
+
+```ts
+const { data: { user }, error } = await supabaseUserClient.auth.getUser();
+if (error || !user) return new Response('unauthorized', { status: 401 });
+if (payload.actorId && payload.actorId !== user.id) {
+  return new Response('forbidden', { status: 403 });
+}
+```
+
+## Server-side computation
+
+- Amounts (Stripe), state transitions, and lifecycle decisions are computed inside the function, not trusted from the client.
+- Read the user's current state from the DB before deciding.
+
+## Idempotency
+
+- Webhooks use `event.id` as an idempotency key. Insert into `webhook_events(provider, event_id PRIMARY KEY)` first; if conflict, return 200 OK without re-processing.
+
+## Email
+
+- Always escape user-controlled strings via `escapeHtml` from `_shared/html.ts` before composing email HTML.
+
+## Tests
+
+- `Deno.test` for: happy path, missing JWT, mismatched JWT subject, idempotent replay, downstream API failure.
+
+## Logging
+
+- `logger.info/error` from `_shared/logger.ts`. Don't `console.log` PII.

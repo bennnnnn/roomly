@@ -1,0 +1,31 @@
+---
+description: No deprecated APIs or guessed versions. Always applied.
+alwaysApply: true
+---
+
+# No deprecated tools, no guessing
+
+Before you write `import` or add a dependency, confirm the current state of the world.
+
+## Before adding any dependency
+
+1. Web-search `<package> latest version <current year>`.
+2. Read the official changelog for breaking changes since the version you remember.
+3. Pin the exact version in `package.json` (no `^` for the initial add).
+4. Append a line to `docs/adr/0007-dependency-pins.md` with the version, the date, and the source URL.
+
+## Before using any SDK API
+
+1. Web-search `<sdk> <feature> documentation <current year>`.
+2. If memory says "use `Foo.bar`" but docs say "use `Foo.baz`", **docs win**.
+3. If the API is marked deprecated, find the replacement and use it. Don't ship deprecated code.
+
+## Examples
+
+- `expo-permissions` → deprecated; use the per-module permission APIs (`expo-camera`, `expo-location`, …).
+- `Supabase` v1 client → don't write new code against it. Use v2.x.
+- `react-native-async-storage/async-storage` `getItem` does not throw — it returns `null`. Don't wrap in try/catch unless you actually parse the result.
+
+## When in doubt
+
+Ask the user via `AskQuestion` with the documented options. Never guess.

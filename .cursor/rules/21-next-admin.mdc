@@ -1,0 +1,32 @@
+---
+description: Next.js App Router conventions for the admin web app.
+globs: apps/admin/**/*.{ts,tsx}
+alwaysApply: false
+---
+
+# Next.js admin
+
+## Architecture
+
+- App Router only. **Server Components by default**; mark `'use client'` only when interactivity demands it.
+- Data fetching in Server Components or Route Handlers — never in client components.
+- Auth via Supabase SSR (`@supabase/ssr`). Role gate via JWT custom claim `role ∈ {admin, moderator}`.
+
+## Data access
+
+- Use a service-role Supabase client **only** inside Route Handlers / Server Actions, gated by the admin role check.
+- Never expose the service role key to the browser. Verify with a build-time check in CI.
+
+## UI
+
+- shadcn/ui + Tailwind v3. Tokens shared via `packages/ui-tokens`.
+- TanStack Table for queues. Lucide for icons.
+
+## Audit log
+
+- Every moderator action writes a row to `audit_log` (actor, action, target_type, target_id, before, after, created_at).
+- The action is performed in a single Postgres transaction with the audit insert.
+
+## File size
+
+- Hard cap **600 lines**. Soft targets: pages ≤200, route handlers ≤150, server actions ≤100.

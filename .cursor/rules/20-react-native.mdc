@@ -1,0 +1,43 @@
+---
+description: React Native / Expo patterns for the mobile app.
+globs: apps/mobile/**/*.{ts,tsx}
+alwaysApply: false
+---
+
+# React Native (Expo SDK 56)
+
+## Performance
+
+- Render from cache first, hydrate after. Never block paint on the network.
+- Lists: `FlatList`/`FlashList` with `keyExtractor`, `getItemLayout` when item size is fixed, `removeClippedSubviews` for long lists.
+- Images: lazy-loaded, compressed ≤1080 px q=0.8, `Image.prefetch` capped to concurrency 3.
+- **No inline `style={{}}` object literals.** Use NativeWind classes or a `StyleSheet.create` block.
+
+## Realtime
+
+- Every Supabase channel **must** include a server-side `filter:` clause. Table-wide subscriptions are forbidden.
+- Tear down channels on `signOut` via `resetAllRealtime()` in `lib/realtime.ts`.
+
+## State
+
+- Zustand stores: one concern per store (auth, session, draftListing, chat, etc.).
+- TanStack Query for server data with per-surface `staleTime` tuning.
+- **Module-level mutable caches are forbidden** — they leak across users on sign-out.
+
+## Screens
+
+- Screens are thin: ≤300 lines. Composition of feature components in `src/features/*/components/*`.
+- No business logic in screens — push to hooks or stores.
+
+## Example
+
+```tsx
+// GOOD — thin screen
+export default function ListingDetailScreen() {
+  const { id } = useLocalSearchParams<{ id: string }>();
+  const query = useListing(id);
+  if (query.isLoading) return <ListingSkeleton />;
+  if (query.error) return <ListingError onRetry={query.refetch} />;
+  return <ListingDetail listing={query.data} />;
+}
+```

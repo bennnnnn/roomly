@@ -1,0 +1,42 @@
+---
+description: Supabase migration conventions (RLS, naming, idempotency, tests).
+globs: supabase/migrations/*.sql
+alwaysApply: false
+---
+
+# Supabase migrations
+
+## Naming
+
+`YYYYMMDDHHMMSS_short_snake_case_summary.sql` — timestamp prefix is mandatory so migrations apply in deterministic order.
+
+## Authoring rules
+
+1. **Idempotent.** Use `create … if not exists`, `create or replace`, `drop policy if exists`.
+2. **RLS enabled** on every new table in the same migration that creates it:
+   ```sql
+   alter table public.foo enable row level security;
+   ```
+3. **At least one policy** for each role that should access the table. Never ship a table without a policy.
+4. **No `using (true)`** for non-public reads.
+5. **Block-aware reads** for any user-facing table: filter out rows where the viewer is blocked by or has blocked the owner.
+6. **Indexes** for every column used in `where`, `order by`, or as a foreign key.
+7. **No data backfill in DDL migrations** — separate file with `…_backfill.sql` suffix.
+8. **Reversible where possible** — include a comment header explaining how to roll back if irreversible.
+
+## Apply via MCP
+
+Use `plugin-supabase-supabase` MCP `apply_migration` so it is tracked. Don't `psql` the production DB by hand.
+
+## Tests
+
+Every migration that adds a policy or RPC ships with a pgTAP test under `supabase/tests/` proving the policy works (positive + negative case).
+
+## Header template
+
+```sql
+-- 20260601120000_create_listings.sql
+-- Purpose: create listings table + RLS + indexes.
+-- Author: <name>
+-- Rollback: see comment block at bottom.
+```

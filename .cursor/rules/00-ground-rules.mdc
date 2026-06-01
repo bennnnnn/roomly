@@ -1,0 +1,33 @@
+---
+description: Core engineering ground rules for Roomly. Always applied.
+alwaysApply: true
+---
+
+# Ground rules (full text in `AGENTS.md`)
+
+This is a **production** app. Read `AGENTS.md` before any task.
+
+1. **No network blocking.** Render from cache, hydrate after. Optimistic writes. Realtime over polling.
+2. **Security-first.** RLS on every table. Amounts/state computed server-side. JWT-pinned Edge Functions.
+3. **Speed.** Cold start <3 s, feed <1.5 s, chat send <100 ms perceived.
+4. **No deprecated tools.** Web-verify every dependency at the moment it is added.
+5. **No guessing.** Search official docs (≤6 months old) before using any API. Record decisions in `docs/adr/`.
+6. **Tests pass or it doesn't ship.** `pnpm gate` must be green before commit.
+7. **Uniform rules.** One ESLint/TS/Prettier/Jest config. New rules require an ADR.
+8. **600 lines per file, hard cap.** Soft targets: screens ≤300, hooks ≤200, stores ≤400.
+9. **Industry standards.** TS strict, Conventional Commits, trunk-based, PR review.
+10. **MCP-first.** Prefer MCP servers over hand-rolled scripts.
+
+## When in doubt
+
+- Re-read the relevant `docs/PRD.md` section, then `docs/lessons-from-prior-codebase.md`.
+- Web-search official docs from the last 6 months. Memory is not evidence.
+- Ask the user via `AskQuestion` with concrete options before guessing.
+
+## What never to do
+
+- Edit applied migrations in place — write a new one.
+- Bypass the quality gate with `--no-verify` or disabled lints.
+- Use `console.*` directly in app code — use `lib/logger.ts`.
+- Subscribe to Supabase Realtime without a server-side `filter:`.
+- Trust the client for amounts, identity, or state transitions.

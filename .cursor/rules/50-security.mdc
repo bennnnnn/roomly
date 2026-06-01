@@ -1,0 +1,36 @@
+---
+description: Roomly security baseline. Always applied.
+alwaysApply: true
+---
+
+# Security baseline
+
+## Database
+
+- RLS enabled on every table. No exceptions.
+- No `using (true)` for non-public reads.
+- All user-facing `SELECT` policies honor `blocks` and (for profile-like rows) `show_in_discover`.
+- Server-write only for `payments`, `audit_log`, `webhook_events`.
+
+## Edge Functions
+
+- JWT pinned to `auth.uid()`. No client-supplied identity in request bodies.
+- Amounts and state transitions computed server-side.
+- HTML escape user-controlled strings before sending email.
+- Idempotency keys on every webhook (insert-or-return).
+
+## Client
+
+- No secrets in `EXPO_PUBLIC_*` env vars beyond what is genuinely public (URL, anon key).
+- Service role key only in Edge Functions and CI — never in app code.
+- Storage buckets default **private**. Signed URLs for verification selfies and listing photos.
+
+## Inputs
+
+- Validate every Edge Function input with a zod schema before doing anything.
+- Strip contact info (phone, email, URL, social handle) from listing text and chat messages on the **server side**. Client-side warning is a UX bonus, not the enforcement.
+
+## Dependencies
+
+- `pnpm audit --prod` in CI. High/critical block merge.
+- No new dependency without a web-search confirming the latest version and license.

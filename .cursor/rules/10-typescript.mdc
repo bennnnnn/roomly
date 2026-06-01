@@ -1,0 +1,47 @@
+---
+description: TypeScript conventions for Roomly (strict, no any, typed errors).
+globs: **/*.{ts,tsx}
+alwaysApply: false
+---
+
+# TypeScript
+
+## Strictness
+
+- `strict: true` and `noUncheckedIndexedAccess: true` are required.
+- **Never** use `any`. Use `unknown` and narrow.
+- `as` casts only for genuinely opaque boundaries (e.g. JSON parse) with a comment explaining why.
+
+## Errors
+
+```ts
+// BAD
+try { await fetchListing(id); } catch (e) { console.error(e); }
+
+// GOOD
+import { mapPgError, ListingFetchError } from '@roomly/lib';
+try {
+  return await fetchListing(id);
+} catch (cause) {
+  logger.error('fetchListing failed', { listingId: id, cause });
+  throw new ListingFetchError('Unable to load listing', { cause: mapPgError(cause, 'listings') });
+}
+```
+
+- Throw typed errors that extend a `RoomlyError` base in `packages/lib/errors.ts`.
+- Map Postgres errors via `pg-errors.ts` (SQLSTATE-driven). Never string-match English error messages.
+
+## Types
+
+- `interface` for public/extendable shapes. `type` for unions and utility types.
+- Discriminated unions over boolean-flag spaghetti.
+- Branded types for IDs: `type ListingId = string & { __brand: 'ListingId' }`.
+
+## Imports
+
+- Path aliases via `tsconfig.base.json` (`@roomly/lib`, `@roomly/db-types`).
+- `eslint-plugin-import` enforces order: builtins, externals, internals, parent, sibling, index.
+
+## File size
+
+- Hard cap **600 lines** (ESLint `max-lines`). Soft targets: hooks ≤200, stores ≤400, screens ≤300.
