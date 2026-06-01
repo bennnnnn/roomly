@@ -25,7 +25,7 @@ set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000020';
 insert into public.push_tokens (user_id, expo_push_token, platform)
 values ('00000000-0000-0000-0000-000000000020', 'ExponentPushToken[test-a]', 'ios');
 
-select ok(
+select is(
   (select count(*)::int from public.push_tokens where user_id = '00000000-0000-0000-0000-000000000020'),
   1,
   'owner can insert own push token'

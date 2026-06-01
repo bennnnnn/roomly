@@ -1,4 +1,4 @@
-import { Image, ScrollView, Text, View } from 'react-native';
+import { Image, Pressable, ScrollView, Text, View } from 'react-native';
 
 import { Button } from '../../../components/Button';
 import { formatListingPrice } from '../api/fetchBrowseListings';
@@ -10,6 +10,7 @@ export interface ListingDetailBodyProps {
   listing: ListingDetail;
   onEdit: () => void;
   onMessage?: (() => void) | undefined;
+  onViewHost?: (() => void) | undefined;
   messageBusy?: boolean | undefined;
   testID?: string | undefined;
 }
@@ -18,6 +19,7 @@ export function ListingDetailBody({
   listing,
   onEdit,
   onMessage,
+  onViewHost,
   messageBusy = false,
   testID,
 }: ListingDetailBodyProps) {
@@ -42,6 +44,11 @@ export function ListingDetailBody({
         <Text className="text-bodyLg text-neutral-700 dark:text-neutral-200">
           {LISTING_TYPE_LABELS[listing.type]} · {listing.areaLabel}
         </Text>
+        {!listing.isOwner && onViewHost ? (
+          <Pressable onPress={onViewHost} testID="listing-view-host">
+            <Text className="text-caption text-accent-500">View host profile</Text>
+          </Pressable>
+        ) : null}
         <Text className="text-caption text-neutral-500">
           Available {listing.availableFrom} · Min stay {String(listing.minMonths)} mo ·{' '}
           {String(listing.viewCount)} views

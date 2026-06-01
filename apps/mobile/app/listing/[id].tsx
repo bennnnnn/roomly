@@ -82,6 +82,7 @@ export default function ListingDetailScreen() {
         testID="listing-detail"
         onEdit={() => router.push(`/listing/${id}/edit`)}
         onMessage={() => void handleMessageHost()}
+        onViewHost={() => router.push(`/profile/${listing.ownerId}`)}
         messageBusy={messageBusy}
       />
       {messageError ? (
